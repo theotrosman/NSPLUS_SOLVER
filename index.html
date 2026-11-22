@@ -8,6 +8,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
   <title>NS Solver · de consigna a diagrama NS Plus · por Theo Trosman</title>
   <meta name="description" content="Pegá una consigna o subí el PDF y obtené el diagrama Nassi-Shneiderman listo para abrir en NS Plus. Creado por Theo Trosman.">
   <meta name="author" content="Theo Trosman">
@@ -30,94 +31,146 @@
     </div>
   </header>
 
-  <main class="wrap wrap-narrow">
-    <section class="intro">
-      <h1>Tu consigna, convertida en diagrama NS.</h1>
-      <p>Pegá el enunciado o subí el PDF, tocá <strong>Resolver</strong> y descargá el archivo para abrirlo en NS Plus.</p>
+  <main class="wrap">
+    <section class="hero">
+      <div class="hero-copy">
+        <h1>De consigna a diagrama NS, <span class="nowrap">en un toque.</span></h1>
+        <p>Pegá el enunciado o subí el PDF. NS Solver arma el diagrama Nassi-Shneiderman y te da el archivo listo para abrir en NS Plus.</p>
+        <ul class="hero-points">
+          <li>Funciona con consignas largas</li>
+          <li>Modulariza y usa clases si te lo piden</li>
+          <li>Se abre directo en NS Plus</li>
+        </ul>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="mini">
+          <div class="mini-head"><b>class</b> Notas:<br>&nbsp;&nbsp;<b>public void</b> main()</div>
+          <div class="mini-nsd">
+            <div class="mini-row mini-out"><i>S</i><span>"Ingrese 3 notas"</span></div>
+            <div class="mini-loop">
+              <div class="mini-row mini-plain">i ← 1, 3, 1</div>
+              <div class="mini-loop-body">
+                <div class="mini-row mini-in"><i>E</i><span>nota</span></div>
+                <div class="mini-row mini-asg">suma ← suma + nota</div>
+              </div>
+            </div>
+            <div class="mini-if">
+              <div class="mini-if-head"><svg viewBox="0 0 100 100" preserveAspectRatio="none"><line x1="0" y1="0" x2="50" y2="100" vector-effect="non-scaling-stroke"/><line x1="100" y1="0" x2="50" y2="100" vector-effect="non-scaling-stroke"/></svg><span>suma / 3 &gt;= 6</span><em class="v">V</em><em class="f">F</em></div>
+              <div class="mini-if-body">
+                <div class="mini-row mini-out"><i>S</i><span>"Aprobó"</span></div>
+                <div class="mini-row mini-out"><i>S</i><span>"Desaprobó"</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <form id="form" class="card" autocomplete="off">
+    <form id="form" class="card composer-card" autocomplete="off">
       <div class="step-title"><span class="step-num">1</span> Poné la consigna</div>
 
-      <div id="dropzone" class="dropzone">
-        <textarea id="consigna" name="consigna" rows="8" maxlength="20000" required
-          placeholder="Pegá acá la consigna completa…"></textarea>
-        <div class="drop-overlay" aria-hidden="true">Soltá el PDF acá</div>
-      </div>
-
-      <div class="upload-row">
-        <span class="or">o si la tenés en PDF:</span>
-        <label class="btn btn-upload">
-          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8zM14 3v5h5M12 18v-6M9 15l3-3 3 3"/></svg>
-          Subir PDF
-          <input id="file" type="file" accept="application/pdf,.pdf,text/plain,.txt" hidden>
-        </label>
+      <div id="dropzone" class="composer">
+        <textarea id="consigna" name="consigna" rows="9" maxlength="20000" required
+          placeholder="Pegá acá la consigna completa, o arrastrá el PDF a este cuadro…"></textarea>
+        <div class="composer-bar">
+          <label class="btn btn-soft btn-sm">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8zM14 3v5h5M12 18v-6M9 15l3-3 3 3"/></svg>
+            Subir PDF
+            <input id="file" type="file" accept="application/pdf,.pdf,text/plain,.txt" hidden>
+          </label>
+          <button id="clear" class="btn btn-ghost btn-sm" type="button" hidden>Borrar</button>
+          <span class="counter"><span id="count">0</span> / 20.000</span>
+        </div>
+        <div class="drop-overlay" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="34" height="34"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8zM14 3v5h5M12 18v-6M9 15l3-3 3 3"/></svg>
+          Soltá el PDF acá
+        </div>
       </div>
       <p id="file-status" class="file-status" hidden></p>
 
+      <div class="step-title"><span class="step-num">2</span> ¿Qué te piden? <span class="step-hint">Si la consigna no dice nada, dejalos apagados.</span></div>
       <div class="toggles">
-        <p class="toggles-title">¿Qué te piden? <span class="muted">Si no dice nada, dejalos apagados.</span></p>
         <label class="toggle">
           <input id="opt-modular" type="checkbox" role="switch">
           <span class="toggle-track" aria-hidden="true"><span class="toggle-thumb"></span></span>
-          <span class="toggle-text"><strong>Modularizar</strong> Dividir el programa en métodos (main llama a los demás).</span>
+          <span class="toggle-text"><strong>Modularizar</strong> Dividir en métodos: main llama a los demás.</span>
         </label>
         <label class="toggle">
           <input id="opt-classes" type="checkbox" role="switch">
           <span class="toggle-track" aria-hidden="true"><span class="toggle-thumb"></span></span>
-          <span class="toggle-text"><strong>Usar clases y objetos</strong> Clases con constructor, atributos, métodos y listas.</span>
+          <span class="toggle-text"><strong>Clases y objetos</strong> Constructor, atributos, métodos y listas.</span>
         </label>
       </div>
 
-      <div class="step-title"><span class="step-num">2</span> Tocá resolver</div>
       <button id="submit" class="btn btn-primary btn-big" type="submit">
         <span class="btn-label">Resolver</span>
+        <kbd class="kbd">Ctrl ↵</kbd>
       </button>
       <p id="form-error" class="form-error" hidden></p>
     </form>
 
-    <section id="state-loading" class="card state" hidden aria-live="polite">
-      <div class="spinner" aria-hidden="true"></div>
-      <p id="loading-text" class="loading-text">Leyendo la consigna…</p>
-      <p class="muted">Puede tardar hasta un minuto si la consigna es larga.</p>
+    <section id="state-loading" class="card state-loading" hidden aria-live="polite">
+      <div class="loading-head">
+        <div class="spinner" aria-hidden="true"></div>
+        <div>
+          <p id="loading-text" class="loading-text">Leyendo la consigna…</p>
+          <p class="muted">Puede tardar hasta un minuto si la consigna es larga.</p>
+        </div>
+      </div>
+      <ol id="loading-steps" class="loading-steps"></ol>
+      <div class="skeleton" aria-hidden="true">
+        <span></span><span></span><span class="sk-wide"></span><span></span><span class="sk-wide"></span>
+      </div>
     </section>
 
     <section id="state-error" class="card state state-error" hidden aria-live="polite">
+      <div class="error-icon" aria-hidden="true">!</div>
       <p class="error-title">Uy, no salió</p>
       <p id="error-text"></p>
-      <button id="retry" class="btn" type="button">Probar de nuevo</button>
+      <button id="retry" class="btn btn-primary" type="button">Probar de nuevo</button>
     </section>
 
-    <section id="state-result" class="card" hidden aria-live="polite">
-      <div class="step-title"><span class="step-num">3</span> Descargalo y abrilo en NS Plus</div>
-      <div class="download-box">
-        <button id="download" class="btn btn-primary btn-big" type="button">
-          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
-          Descargar archivo
+    <section id="state-result" class="card result-card" hidden aria-live="polite">
+      <div class="result-top">
+        <div>
+          <p class="result-kicker">Listo</p>
+          <h2 id="result-name" class="result-name"></h2>
+          <p id="result-meta" class="muted"></p>
+        </div>
+        <button id="download" class="btn btn-primary btn-download" type="button">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+          Descargar para NS Plus
         </button>
-        <ol class="open-steps">
-          <li>Entrá a <a href="https://nsplus.netlify.app/" target="_blank" rel="noopener">NS Plus</a>.</li>
-          <li>Tocá el botón de la <strong>carpeta</strong> (arriba, al lado del nombre del proyecto).</li>
-          <li>Elegí el archivo que descargaste. ¡Listo!</li>
-        </ol>
       </div>
 
-      <h2 id="result-name" class="result-name"></h2>
+      <ol class="open-steps">
+        <li><span>1</span><p>Descargá el archivo.</p></li>
+        <li><span>2</span><p>Entrá a <a href="https://nsplus.netlify.app/" target="_blank" rel="noopener">NS Plus</a> y tocá el botón de la <strong>carpeta</strong>.</p></li>
+        <li><span>3</span><p>Elegí el archivo. ¡Listo!</p></li>
+      </ol>
+
       <div id="explanation-box" class="explanation">
         <p class="explanation-title">Cómo funciona</p>
         <p id="explanation"></p>
       </div>
+
+      <nav id="diagram-nav" class="diagram-nav" aria-label="Métodos" hidden></nav>
       <div id="diagrams" class="diagrams"></div>
 
       <p class="warning">La IA se puede equivocar: antes de entregarlo, seguí el diagrama paso a paso con un ejemplo.</p>
       <div class="result-actions">
-        <button id="regenerate" class="btn" type="button">No me convence, hacelo de nuevo</button>
+        <button id="regenerate" class="btn" type="button">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6"/></svg>
+          Hacelo de nuevo
+        </button>
         <button id="new" class="btn btn-ghost" type="button">Hacer otra consigna</button>
       </div>
     </section>
 
     <p class="credit-inline">NS Solver fue creado por <a href="https://github.com/theotrosman" target="_blank" rel="noopener">Theo Trosman</a>. © 2026 Theo Trosman. Todos los derechos reservados.</p>
   </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 
   <footer class="footer">
     <div class="wrap footer-inner">

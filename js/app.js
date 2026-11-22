@@ -15,8 +15,7 @@
     "Leyendo la consigna…",
     "Pensando cómo resolverlo…",
     "Armando las cajas del diagrama…",
-    "Revisando que no falte nada…",
-    "Ya casi…"
+    "Revisando que no falte nada…"
   ];
 
   var $ = function (id) { return document.getElementById(id); };
@@ -35,6 +34,21 @@
   function formError(msg) {
     $("form-error").textContent = msg || "";
     $("form-error").hidden = !msg;
+  }
+
+  function updateCount() {
+    var n = consigna.value.length;
+    $("count").textContent = n.toLocaleString("es-AR");
+    $("clear").hidden = n === 0;
+  }
+
+  var toastTimer = null;
+  function toast(msg) {
+    var el = $("toast");
+    el.textContent = msg;
+    el.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { el.hidden = true; }, 5000);
   }
 
   function fileStatus(msg, isError) {
@@ -63,7 +77,13 @@
   optClasses.addEventListener("change", syncToggles);
   syncToggles();
 
-  consigna.addEventListener("input", function () { formError(""); });
+  consigna.addEventListener("input", function () { formError(""); updateCount(); });
+  $("clear").addEventListener("click", function () {
+    consigna.value = "";
+    fileStatus("");
+    updateCount();
+    consigna.focus();
+  });
   consigna.addEventListener("keydown", function (e) {
     if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); form.requestSubmit(); }
   });
@@ -97,6 +117,7 @@
       }
       consigna.value = text;
       consigna.scrollTop = 0;
+      updateCount();
     } catch (err) {
       console.error(err);
       fileStatus("No pude abrir ese PDF. Probá de nuevo o copiá y pegá la consigna.", true);
@@ -130,14 +151,29 @@
   window.addEventListener("drop", function (e) { if (!dropzone.contains(e.target)) e.preventDefault(); });
 
   /* --- Generar --- */
+  function setLoadingStep(i) {
+    $("loading-text").textContent = LOADING_STEPS[i];
+    Array.prototype.forEach.call($("loading-steps").children, function (li, j) {
+      li.className = j < i ? "is-done" : j === i ? "is-active" : "";
+    });
+  }
+
   function startLoading() {
     var i = 0;
-    $("loading-text").textContent = LOADING_STEPS[0];
+    var list = $("loading-steps");
+    list.innerHTML = "";
+    LOADING_STEPS.forEach(function (s) {
+      var li = document.createElement("li");
+      li.textContent = s.replace(/…$/, "");
+      list.appendChild(li);
+    });
+    setLoadingStep(0);
     clearInterval(loadingTimer);
+    // La IA no avisa en qué paso está: los pasos avanzan con el tiempo y el último espera.
     loadingTimer = setInterval(function () {
       i = Math.min(i + 1, LOADING_STEPS.length - 1);
-      $("loading-text").textContent = LOADING_STEPS[i];
-    }, 4000);
+      setLoadingStep(i);
+    }, 5000);
     submit.disabled = true;
     submit.querySelector(".btn-label").textContent = "Resolviendo…";
     show("loading");
@@ -184,20 +220,39 @@
     $("result-name").textContent = p.name;
     $("explanation").textContent = p.explanation || "";
     $("explanation-box").hidden = !p.explanation;
-    var box = $("diagrams");
+    var box = $("diagrams"), nav = $("diagram-nav");
     box.innerHTML = "";
+    nav.innerHTML = "";
     var classes = p.diagrams.map(function (d) { return d.className; }).filter(function (c, i, all) { return all.indexOf(c) === i; });
+    var n = p.diagrams.length;
+    $("result-meta").textContent = n === 1
+      ? "1 diagrama"
+      : n + " diagramas" + (classes.length > 1 ? " en " + classes.length + " clases" : "");
     var lastClass = null;
-    p.diagrams.forEach(function (d) {
-      if (classes.length > 1 && d.className !== lastClass) {
+    p.diagrams.forEach(function (d, i) {
+      var newClass = classes.length > 1 && d.className !== lastClass;
+      if (newClass) {
         var h = document.createElement("h3");
         h.className = "class-title";
         h.textContent = "Clase " + d.className;
         box.appendChild(h);
+        var label = document.createElement("span");
+        label.className = "nav-class";
+        label.textContent = d.className;
+        nav.appendChild(label);
         lastClass = d.className;
       }
-      box.appendChild(NSPreview.renderDiagram(d));
+      var frame = document.createElement("div");
+      frame.className = "diagram-frame";
+      frame.id = "diagrama-" + (i + 1);
+      frame.appendChild(NSPreview.renderDiagram(d));
+      box.appendChild(frame);
+      var link = document.createElement("a");
+      link.href = "#" + frame.id;
+      link.textContent = d.name + "()";
+      nav.appendChild(link);
     });
+    nav.hidden = n < 2;
     if (scroll) show("result");
     else Object.keys(views).forEach(function (k) { views[k].hidden = k !== "result"; });
   }
@@ -217,6 +272,7 @@
     a.click();
     a.remove();
     setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+    toast("Descargado: " + a.download + ". Ahora abrilo en NS Plus con el botón de la carpeta.");
   });
 
   $("regenerate").addEventListener("click", generate);
@@ -225,6 +281,7 @@
     consigna.value = "";
     fileStatus("");
     formError("");
+    updateCount();
     show(null);
     window.scrollTo({ top: 0, behavior: "smooth" });
     consigna.focus();
@@ -239,4 +296,5 @@
       renderResult(false);
     }
   } catch (e) { /* ignorar */ }
+  updateCount();
 })();
