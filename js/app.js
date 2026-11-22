@@ -9,47 +9,108 @@
   console.log("%cNS Solver%c — © 2026 Theo Trosman. Todos los derechos reservados. https://github.com/theotrosman",
     "font-weight:700", "font-weight:400");
 
-  var EXAMPLES = [
-    { label: "Pares e impares", text: "Pedir 10 números enteros y mostrar cuántos son pares, cuántos son impares y cuál fue el mayor de todos." },
-    { label: "Promedio con fin", text: "Ingresar notas (del 1 al 10, validando) hasta que se ingrese 0. Al final mostrar el promedio, la nota más alta y cuántos aprobaron (nota >= 6)." },
-    { label: "Menú calculadora", text: "Mostrar un menú con las opciones 1-Sumar, 2-Restar, 3-Multiplicar, 4-Dividir y 5-Salir. Pedir dos números para cada operación y mostrar el resultado. Repetir hasta que el usuario elija Salir. No permitir dividir por cero." },
-    { label: "Número primo", text: "Pedir un número entero positivo y mostrar si es primo o no." },
-    { label: "Cajero", text: "Un cajero automático tiene billetes de 1000, 500 y 100. Pedir un monto múltiplo de 100 (validarlo) y mostrar la cantidad mínima de billetes de cada tipo que hay que entregar." }
-  ];
   var STORAGE_KEY = "ns-solver:last";
-  var LOADING_STEPS = ["Leyendo la consigna…", "Pensando la lógica…", "Armando los bloques…", "Revisando el diagrama…"];
+  var MAX_LEN = 20000;
+  var LOADING_STEPS = [
+    "Leyendo la consigna…",
+    "Pensando cómo resolverlo…",
+    "Armando las cajas del diagrama…",
+    "Revisando que no falte nada…",
+    "Ya casi…"
+  ];
 
   var $ = function (id) { return document.getElementById(id); };
-  var form = $("form"), consigna = $("consigna"), submit = $("submit");
-  var states = { empty: $("state-empty"), loading: $("state-loading"), error: $("state-error"), result: $("state-result") };
+  var form = $("form"), consigna = $("consigna"), submit = $("submit"), dropzone = $("dropzone");
+  var views = { loading: $("state-loading"), error: $("state-error"), result: $("state-result") };
   var current = null;
   var loadingTimer = null;
 
   $("year").textContent = String(Math.max(2026, new Date().getFullYear()));
 
-  EXAMPLES.forEach(function (ex) {
-    var b = document.createElement("button");
-    b.type = "button";
-    b.className = "chip";
-    b.textContent = ex.label;
-    b.addEventListener("click", function () {
-      consigna.value = ex.text;
-      updateCount();
-      consigna.focus();
-    });
-    $("examples").appendChild(b);
-  });
+  function show(name) {
+    Object.keys(views).forEach(function (k) { views[k].hidden = k !== name; });
+    if (name && views[name]) views[name].scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 
-  function updateCount() { $("count").textContent = consigna.value.length; }
-  consigna.addEventListener("input", updateCount);
+  function formError(msg) {
+    $("form-error").textContent = msg || "";
+    $("form-error").hidden = !msg;
+  }
+
+  function fileStatus(msg, isError) {
+    var el = $("file-status");
+    el.textContent = msg || "";
+    el.hidden = !msg;
+    el.classList.toggle("is-error", !!isError);
+  }
+
+  consigna.addEventListener("input", function () { formError(""); });
   consigna.addEventListener("keydown", function (e) {
     if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); form.requestSubmit(); }
   });
 
-  function show(name) {
-    Object.keys(states).forEach(function (k) { states[k].hidden = k !== name; });
+  /* --- PDF --- */
+  async function loadFile(file) {
+    if (!file) return;
+    formError("");
+    var isPdf = /pdf$/i.test(file.type) || /\.pdf$/i.test(file.name);
+    var isTxt = /^text\//.test(file.type) || /\.txt$/i.test(file.name);
+    if (!isPdf && !isTxt) {
+      fileStatus("Ese archivo no es un PDF. Subí un PDF o pegá el texto.", true);
+      return;
+    }
+    if (file.size > 25 * 1024 * 1024) {
+      fileStatus("El PDF es muy pesado (más de 25 MB).", true);
+      return;
+    }
+    fileStatus("Leyendo " + file.name + "…");
+    try {
+      var text = isPdf ? await PDFText.extractText(file) : (await file.text()).trim();
+      if (text.replace(/\s/g, "").length < 20) {
+        fileStatus("No pude leer texto de ese PDF (parece una foto o un escaneo). Copiá la consigna y pegala arriba.", true);
+        return;
+      }
+      if (text.length > MAX_LEN) {
+        text = text.slice(0, MAX_LEN);
+        fileStatus("Listo, cargué " + file.name + ". Era muy largo, así que usé solo el principio. Si te falta algo, pegá ese ejercicio solo.");
+      } else {
+        fileStatus("Listo, cargué " + file.name + ". Podés revisar el texto arriba y tocar Resolver.");
+      }
+      consigna.value = text;
+      consigna.scrollTop = 0;
+    } catch (err) {
+      console.error(err);
+      fileStatus("No pude abrir ese PDF. Probá de nuevo o copiá y pegá la consigna.", true);
+    }
   }
 
+  $("file").addEventListener("change", function (e) {
+    loadFile(e.target.files[0]);
+    e.target.value = "";
+  });
+
+  ["dragenter", "dragover"].forEach(function (ev) {
+    dropzone.addEventListener(ev, function (e) {
+      if (e.dataTransfer && Array.prototype.indexOf.call(e.dataTransfer.types, "Files") >= 0) {
+        e.preventDefault();
+        dropzone.classList.add("is-dragging");
+      }
+    });
+  });
+  ["dragleave", "drop"].forEach(function (ev) {
+    dropzone.addEventListener(ev, function () { dropzone.classList.remove("is-dragging"); });
+  });
+  dropzone.addEventListener("drop", function (e) {
+    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
+      e.preventDefault();
+      loadFile(e.dataTransfer.files[0]);
+    }
+  });
+  // Evita que el navegador abra el PDF si se suelta fuera del cuadro.
+  window.addEventListener("dragover", function (e) { e.preventDefault(); });
+  window.addEventListener("drop", function (e) { if (!dropzone.contains(e.target)) e.preventDefault(); });
+
+  /* --- Generar --- */
   function startLoading() {
     var i = 0;
     $("loading-text").textContent = LOADING_STEPS[0];
@@ -57,92 +118,87 @@
     loadingTimer = setInterval(function () {
       i = Math.min(i + 1, LOADING_STEPS.length - 1);
       $("loading-text").textContent = LOADING_STEPS[i];
-    }, 2200);
+    }, 4000);
     submit.disabled = true;
-    submit.querySelector(".btn-label").textContent = "Generando…";
+    submit.querySelector(".btn-label").textContent = "Resolviendo…";
     show("loading");
   }
 
   function stopLoading() {
     clearInterval(loadingTimer);
     submit.disabled = false;
-    submit.querySelector(".btn-label").textContent = "Generar diagrama";
-  }
-
-  function selectedMode() {
-    var r = form.querySelector('input[name="mode"]:checked');
-    return r ? r.value : "simple";
+    submit.querySelector(".btn-label").textContent = "Resolver";
   }
 
   async function generate() {
     var text = consigna.value.trim();
     if (text.length < 10) {
+      formError("Primero pegá la consigna o subí el PDF.");
       consigna.focus();
-      showError("Escribí una consigna un poco más completa.");
       return;
     }
+    formError("");
     startLoading();
     try {
       var res = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ consigna: text, mode: selectedMode() })
+        body: JSON.stringify({ consigna: text })
       });
       var data = await res.json().catch(function () { return {}; });
-      if (!res.ok || !data.project) throw new Error(data.error || "El servidor respondió con un error (" + res.status + ").");
-      current = { project: data.project, consigna: text, model: data.model };
+      if (!res.ok || !data.project) throw new Error(data.error || "Algo falló en el servidor. Probá de nuevo.");
+      current = { project: data.project, consigna: text };
       try { localStorage.setItem(STORAGE_KEY, JSON.stringify(current)); } catch (e) { /* sin espacio */ }
-      renderResult();
+      renderResult(true);
     } catch (err) {
-      showError(err.message || "Error de conexión.");
+      $("error-text").textContent = err.message === "Failed to fetch"
+        ? "No hay conexión. Revisá internet y probá de nuevo."
+        : err.message;
+      show("error");
     } finally {
       stopLoading();
     }
   }
 
-  function showError(msg) {
-    $("error-text").textContent = msg;
-    show("error");
-  }
-
-  function projectName() {
-    return $("projectName").value.trim() || current.project.name;
-  }
-
-  function renderResult() {
+  function renderResult(scroll) {
     var p = current.project;
-    $("result-name").textContent = projectName();
-    var n = p.diagrams.length;
-    $("result-meta").textContent = n + (n === 1 ? " diagrama" : " diagramas") + " · " + p.diagrams.map(function (d) { return d.name + "()"; }).join(", ");
+    $("result-name").textContent = p.name;
     $("explanation").textContent = p.explanation || "";
-    $("explanation").hidden = !p.explanation;
+    $("explanation-box").hidden = !p.explanation;
     var box = $("diagrams");
     box.innerHTML = "";
     p.diagrams.forEach(function (d) { box.appendChild(NSPreview.renderDiagram(d)); });
-    show("result");
+    if (scroll) show("result");
+    else Object.keys(views).forEach(function (k) { views[k].hidden = k !== "result"; });
   }
 
   function fileName(name) {
-    return (name || "proyecto").replace(/[\\/:*?"<>|]+/g, "").replace(/\s+/g, " ").trim().slice(0, 60) || "proyecto";
+    return (name || "diagrama").replace(/[\\/:*?"<>|]+/g, "").replace(/\s+/g, " ").trim().slice(0, 60) || "diagrama";
   }
 
   $("download").addEventListener("click", function () {
     if (!current) return;
-    var project = Object.assign({}, current.project, { name: projectName() });
-    var text = NSPlusFile.buildProjectFile(project, { author: $("author").value.trim(), group: $("group").value.trim() });
+    var text = NSPlusFile.buildProjectFile(current.project);
     var blob = new Blob([text], { type: "text/plain;charset=utf-8" });
     var a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = fileName(project.name) + ".nsplus";
+    a.download = fileName(current.project.name) + ".nsplus";
     document.body.appendChild(a);
     a.click();
     a.remove();
     setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
   });
 
-  $("projectName").addEventListener("input", function () { if (current) $("result-name").textContent = projectName(); });
   $("regenerate").addEventListener("click", generate);
   $("retry").addEventListener("click", generate);
+  $("new").addEventListener("click", function () {
+    consigna.value = "";
+    fileStatus("");
+    formError("");
+    show(null);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    consigna.focus();
+  });
   form.addEventListener("submit", function (e) { e.preventDefault(); generate(); });
 
   try {
@@ -150,8 +206,7 @@
     if (saved && saved.project && saved.project.diagrams) {
       current = saved;
       consigna.value = saved.consigna || "";
-      renderResult();
+      renderResult(false);
     }
   } catch (e) { /* ignorar */ }
-  updateCount();
 })();

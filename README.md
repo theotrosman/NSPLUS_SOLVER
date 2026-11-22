@@ -8,10 +8,11 @@ Creado por **Theo Trosman** — [github.com/theotrosman](https://github.com/theo
 
 ## Qué hace
 
-- Genera uno o varios diagramas (un método por diagrama) a partir de la consigna.
-- Usa todos los bloques de NS Plus: entrada, salida, asignación, si/sino, según (switch), mientras, hacer-mientras, para, para cada, llamada, return y comentarios.
-- Declara variables y constantes con las convenciones de ORT.
-- Explica la lógica en castellano.
+- Sin opciones ni configuraciones: pegás la consigna (o subís el PDF), tocás **Resolver** y descargás.
+- Lee el texto de PDFs directo en el navegador (con pdf.js). Los PDFs escaneados como foto no se pueden leer.
+- Acepta consignas largas (hasta 20.000 caracteres). Si el texto trae varios ejercicios, arma un diagrama por ejercicio.
+- Resuelve de la forma más simple posible, como lo haría un alumno de 15 años: un solo diagrama `main`, estructuras básicas y nombres de variables claros.
+- Explica la lógica con palabras simples.
 - Exporta un `.nsplus` que NS Plus abre con el botón de abrir proyecto.
 
 ## Deploy en Vercel
@@ -42,6 +43,7 @@ npm test
 | --- | --- |
 | `index.html`, `css/style.css`, `js/app.js` | La página |
 | `js/preview.js` | Dibuja la vista previa del diagrama |
+| `js/pdf-text.js` | Saca el texto de los PDFs |
 | `js/nsplus-file.js` | Convierte el diagrama al formato de archivo de NS Plus |
 | `api/generate.js` | Función de Vercel que consulta a Groq |
 | `api/_prompt.js` | Instrucciones para el modelo |

@@ -1,0 +1,45 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 996 >>
+stream
+BT /F1 11 Tf 50 790 Td 15 TL
+(Ejercicio integrador: Kiosco escolar) Tj T*
+() Tj T*
+(El kiosco del colegio necesita un programa para registrar las ventas de un día.) Tj T*
+(1. Pedir el nombre del encargado y el dinero inicial de la caja \(no puede ser negativo, validarlo\).) Tj T*
+(2. Mostrar un menú: 1 - Registrar venta, 2 - Ver resumen parcial, 3 - Cerrar caja \(salir\).) Tj T*
+(   Repetir hasta que el usuario elija salir.) Tj T*
+(3. Registrar venta: pedir el código \(1 Alfajor $800, 2 Gaseosa $1200, 3 Sándwich $2500, 4 Agua $700\).) Tj T*
+(   Si el código no existe, mostrar "Producto inexistente". Pedir la cantidad \(entre 1 y 20\).) Tj T*
+(   Si la cantidad es 5 o más, 10% de descuento. Mostrar el total de la venta.) Tj T*
+(4. Ver resumen parcial: cantidad de ventas y total recaudado.) Tj T*
+(5. Cerrar caja: mostrar el encargado, la cantidad de ventas, el total recaudado y el promedio por venta.) Tj T*
+(6. Si la opción del menú es inválida, mostrar "Opción incorrecta".) Tj T*
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000001288 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1385
+%%EOF

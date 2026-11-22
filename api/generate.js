@@ -13,7 +13,7 @@ import { normalizeProject, ValidationError } from "./_normalize.js";
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 // Si GROQ_MODEL no está o deja de existir, se prueban estos en orden.
 const FALLBACK_MODELS = ["openai/gpt-oss-120b", "openai/gpt-oss-20b", "qwen/qwen3.8-27b"];
-const MAX_CONSIGNA = 4000;
+const MAX_CONSIGNA = 20000;
 const MAX_ATTEMPTS = 3;
 
 // Límite simple por IP (por instancia del servidor): 8 pedidos por minuto.
@@ -95,15 +95,14 @@ export default async function handler(req, res) {
   if (typeof body === "string") {
     try { body = JSON.parse(body); } catch { body = {}; }
   }
-  const consigna = String(body?.consigna || "").trim();
-  const mode = body?.mode === "metodos" ? "metodos" : "simple";
+  const consigna = String(body?.consigna || "").replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
   if (consigna.length < 10) return res.status(400).json({ error: "Escribí una consigna un poco más completa." });
-  if (consigna.length > MAX_CONSIGNA) return res.status(400).json({ error: `La consigna es muy larga (máximo ${MAX_CONSIGNA} caracteres).` });
+  if (consigna.length > MAX_CONSIGNA) return res.status(400).json({ error: "La consigna es demasiado larga. Probá pegando un ejercicio por vez." });
 
   const models = [...new Set([process.env.GROQ_MODEL, ...FALLBACK_MODELS].map((m) => (m || "").trim()).filter(Boolean))];
   let modelIndex = 0;
   const messages = [
-    { role: "system", content: buildSystemPrompt(mode) },
+    { role: "system", content: buildSystemPrompt() },
     { role: "user", content: `Consigna:\n"""\n${consigna}\n"""` }
   ];
 
