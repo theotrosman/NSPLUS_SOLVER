@@ -328,3 +328,50 @@ a { color: var(--accent); text-underline-offset: 2px; }
   .btn-download { width: 100%; }
 }
 .open-steps li p { margin: 0; }
+
+/* ---------- Hall: ORT Info es fácil ---------- */
+.crumbs { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.crumb-sep { color: var(--line-2); font-size: 20px; }
+.crumb-current { font-weight: 600; color: var(--ink-2); white-space: nowrap; }
+@media (max-width: 520px) { .crumbs .brand-name { display: none; } }
+
+.hall-hero { padding: 64px 0 34px; max-width: 640px; }
+.hall-hero h1 { font-size: clamp(36px, 6vw, 56px); line-height: 1.02; letter-spacing: -.03em; margin: 0 0 14px; font-weight: 800; }
+.hall-hero p { margin: 0; font-size: 19px; color: var(--ink-2); }
+
+.tools { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.tool-card {
+  position: relative; display: flex; flex-direction: column; gap: 18px; padding: 22px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow);
+  color: var(--ink); text-decoration: none; transition: transform .18s cubic-bezier(.3, .7, .4, 1), border-color .18s, box-shadow .18s;
+}
+a.tool-card:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: 0 2px 4px rgba(27, 33, 48, .06), 0 14px 32px rgba(27, 33, 48, .12); }
+a.tool-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.tool-body h2 { margin: 0 0 6px; font-size: 21px; letter-spacing: -.01em; }
+.tool-body p { margin: 0; color: var(--ink-2); font-size: 15px; }
+.tool-tags { list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.tool-tags li { font-size: 12px; font-weight: 600; color: var(--ink-2); background: var(--surface-2); border: 1px solid var(--line); padding: 3px 9px; border-radius: 999px; }
+.tool-go { margin-top: auto; font-weight: 700; color: var(--accent); display: inline-flex; gap: 6px; }
+.tool-go span { transition: transform .18s; }
+a.tool-card:hover .tool-go span { transform: translateX(4px); }
+
+.tool-icon {
+  width: 64px; height: 56px; border: 1.5px solid var(--nsd-ink); border-radius: 4px; background: var(--nsd-paper);
+  display: grid; grid-template-rows: 9px 13px 10px 1fr; overflow: hidden;
+}
+.tool-icon > * + * { border-top: 1px solid var(--nsd-ink); }
+.ti-row { background: #e6f5e4; }
+.ti-if { position: relative; background: #e5f4f8; }
+.ti-if svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ti-if line { stroke: var(--nsd-ink); stroke-width: 1; }
+.ti-split { display: grid; grid-template-columns: 1fr 1fr; }
+.ti-split > div:first-child { background: #fdf8e1; border-right: 1px solid var(--nsd-ink); }
+.ti-split > div:last-child { background: #fce9e7; }
+.ti-loop { display: grid; grid-template-columns: 12px 1fr; background: #e8e9fb; }
+.ti-loop .ti-row { border-left: 1px solid var(--nsd-ink); background: #fdf8e1; margin-top: 4px; border-top: 1px solid var(--nsd-ink); }
+
+.tool-soon { box-shadow: none; background: transparent; border: 1.5px dashed var(--line-2); }
+.tool-soon .tool-body h2 { color: var(--ink-2); }
+.tool-icon-soon { display: grid; grid-template-rows: none; place-items: center; border: 1.5px dashed var(--line-2); background: transparent; color: var(--muted); font-size: 28px; font-weight: 300; }
+.tool-badge { margin-top: auto; align-self: flex-start; font-size: 12px; font-weight: 700; color: var(--muted); background: var(--surface-2); padding: 4px 10px; border-radius: 999px; }
+@media (prefers-reduced-motion: reduce) { .tool-card, .tool-go span { transition: none; } a.tool-card:hover { transform: none; } }

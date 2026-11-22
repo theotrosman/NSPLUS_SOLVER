@@ -120,7 +120,10 @@ http.createServer(async (req, res) => {
     }
     return handler(req, res);
   }
-  const path = normalize(join(root, url.pathname === "/" ? "index.html" : decodeURIComponent(url.pathname)));
+  let pathname = url.pathname === "/" ? "/index.html" : decodeURIComponent(url.pathname);
+  // Igual que cleanUrls de Vercel: /ns-solver → ns-solver.html
+  if (!extname(pathname)) pathname += ".html";
+  const path = normalize(join(root, pathname));
   if (!path.startsWith(root) || /[\\/](api|node_modules|\.git)[\\/]/.test(path.slice(root.length - 1))) {
     res.statusCode = 404; return res.end("No encontrado");
   }

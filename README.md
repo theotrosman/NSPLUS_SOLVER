@@ -1,12 +1,22 @@
-# NS Solver
+# ORT Info es fácil
 
 **© 2026 [Theo Trosman](https://github.com/theotrosman). Todos los derechos reservados.**
+
+Página con herramientas simples para la materia de Informática. La página principal (`index.html`) es el hall con todas las herramientas, y cada herramienta tiene su propia página:
+
+| Herramienta | Página | Archivo |
+| --- | --- | --- |
+| NS Solver | `/ns-solver` | `ns-solver.html` |
+
+Para sumar una herramienta nueva: crear su `.html` en la raíz y agregar su tarjeta en `index.html`.
+
+## NS Solver
 
 De consigna a diagrama Nassi-Shneiderman en segundos. Pegás el enunciado de un ejercicio de programación, la IA (Groq) arma el diagrama completo, lo ves en una vista previa y lo descargás como archivo `.nsplus` para abrirlo directo en [NS Plus](https://nsplus.netlify.app/).
 
 Creado por **Theo Trosman** — [github.com/theotrosman](https://github.com/theotrosman)
 
-## Qué hace
+### Qué hace
 
 - Muy simple: pegás la consigna (o subís el PDF), tocás **Resolver** y descargás.
 - Dos interruptores opcionales, según lo que pida la consigna:
@@ -19,7 +29,7 @@ Creado por **Theo Trosman** — [github.com/theotrosman](https://github.com/theo
 - Explica la lógica con palabras simples.
 - Exporta un `.nsplus` que NS Plus abre con el botón de abrir proyecto.
 
-## Deploy en Vercel
+### Deploy en Vercel
 
 1. Importá este repo en [vercel.com/new](https://vercel.com/new) (Framework preset: **Other**, sin build command).
 2. En **Settings → Environment Variables** agregá:
@@ -29,7 +39,7 @@ Creado por **Theo Trosman** — [github.com/theotrosman](https://github.com/theo
 
 La clave queda solo en el servidor (`api/generate.js`); nunca llega al navegador.
 
-## Probarlo en tu compu
+### Probarlo en tu compu
 
 ```powershell
 $env:GROQ_API_KEY="tu_clave"; npm run dev
@@ -41,11 +51,13 @@ Abrí <http://localhost:3000>. Sin `GROQ_API_KEY` funciona en modo demo con un d
 npm test
 ```
 
-## Estructura
+### Estructura
 
 | Archivo | Qué hace |
 | --- | --- |
-| `index.html`, `css/style.css`, `js/app.js` | La página |
+| `index.html` | Hall con todas las herramientas |
+| `ns-solver.html`, `js/app.js` | Página de NS Solver |
+| `css/style.css` | Estilos compartidos |
 | `js/preview.js` | Dibuja la vista previa del diagrama |
 | `js/pdf-text.js` | Saca el texto de los PDFs |
 | `js/nsplus-file.js` | Convierte el diagrama al formato de archivo de NS Plus |
