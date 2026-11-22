@@ -396,3 +396,36 @@ a.tool-card:hover .tool-go span { transform: translateX(4px); }
 .tool-icon-uml { display: block; background: transparent; border: 0; width: 64px; height: 56px; }
 .tool-icon-uml svg { width: 100%; height: 100%; }.tool-icon-uml { color: var(--ink); }
 .tool-icon-uml rect { fill: var(--surface); }
+
+/* ---------- Franjas índigo "estilo NS Plus" (parodia con cariño) ---------- */
+:root { --indigo: #3f51b5; --indigo-dark: #34449b; }
+.topbar { background: var(--indigo); border-bottom: 0; color: #fff; font-family: Verdana, Geneva, sans-serif; }
+.topbar .brand, .topbar .byline, .topbar .crumb-current { color: #fff; }
+.topbar .byline:hover { background: rgba(255, 255, 255, .14); color: #fff; }
+.topbar .crumb-sep { color: rgba(255, 255, 255, .55); }
+.topbar .brand-mark { display: none; }
+.topbar .brand-name {
+  font-family: Verdana, Geneva, sans-serif; font-weight: 700; font-size: 16px; letter-spacing: 0;
+  border: 2px solid #fff; border-radius: 6px; padding: 3px 9px;
+}
+.topbar .brand-name::after { content: "+"; margin-left: 2px; }
+.topbar .crumb-current { font-family: Verdana, Geneva, sans-serif; font-weight: 400; font-size: 14px; }
+
+body { padding-bottom: 35px; }
+.footer { background: var(--indigo); color: #e3e7fb; border-top: 0; font-family: Verdana, Geneva, sans-serif; }
+.footer .disclaimer { color: #c9d0f5; }
+.indigo-bar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; height: 35px;
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; padding: 0 16px;
+  background: var(--indigo); color: #fff; font: 14px Verdana, Geneva, sans-serif;
+}
+.indigo-bar a { color: #fff; display: inline-flex; align-items: center; gap: 6px; text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; }
+.indigo-bar .ib-left { justify-self: start; }
+.indigo-bar .ib-right { justify-self: end; }
+.indigo-bar .ib-motto { font-family: "Dancing Script", "Times New Roman", serif; font-size: 18px; white-space: nowrap; }
+.indigo-bar .ib-motto sup { font-family: Verdana, sans-serif; font-size: 11px; }
+.toast { bottom: 52px; }
+@media (max-width: 640px) {
+  .indigo-bar { grid-template-columns: 1fr; justify-items: center; }
+  .indigo-bar .ib-left, .indigo-bar .ib-right { display: none; }
+}
