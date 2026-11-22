@@ -5,13 +5,14 @@
  *
  * Variables de entorno (Vercel → Settings → Environment Variables):
  *   GROQ_API_KEY  (obligatoria)
- *   GROQ_MODEL    (opcional, por defecto llama-3.3-70b-versatile)
+ *   GROQ_MODEL    (opcional, por defecto openai/gpt-oss-120b)
  */
 import { buildSystemPrompt } from "./_prompt.js";
 import { normalizeProject, ValidationError } from "./_normalize.js";
 
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
-const DEFAULT_MODEL = "llama-3.3-70b-versatile";
+// Si GROQ_MODEL no está o deja de existir, se prueban estos en orden.
+const FALLBACK_MODELS = ["openai/gpt-oss-120b", "openai/gpt-oss-20b", "qwen/qwen3.8-27b"];
 const MAX_CONSIGNA = 4000;
 const MAX_ATTEMPTS = 3;
 
@@ -26,26 +27,55 @@ function rateLimited(ip) {
   return recent.length > 8;
 }
 
-async function askGroq(messages, model, apiKey) {
+function isModelError(err) {
+  return err.status === 404 || /model[\s\S]*(does not exist|not found|decommissioned|deprecated|do not have access|not supported)/i.test(err.message);
+}
+
+async function callGroq(payload, apiKey) {
   const res = await fetch(GROQ_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
-    body: JSON.stringify({
-      model,
-      messages,
-      temperature: 0.2,
-      max_tokens: 8000,
-      response_format: { type: "json_object" }
-    })
+    body: JSON.stringify(payload)
   });
   const body = await res.json().catch(() => ({}));
   if (!res.ok) {
-    const msg = body?.error?.message || `Groq respondió ${res.status}`;
-    const err = new Error(msg);
+    const err = new Error(body?.error?.message || `Groq respondió ${res.status}`);
     err.status = res.status;
+    err.code = body?.error?.code;
     throw err;
   }
   return body?.choices?.[0]?.message?.content || "";
+}
+
+async function askGroq(messages, model, apiKey) {
+  const payload = {
+    model,
+    messages,
+    temperature: 0.2,
+    max_completion_tokens: 30000,
+    response_format: { type: "json_object" }
+  };
+  if (/gpt-oss/.test(model)) payload.reasoning_effort = "medium";
+  try {
+    return await callGroq(payload, apiKey);
+  } catch (err) {
+    // Algunos modelos no aceptan modo JSON o reasoning_effort: se reintenta sin esos parámetros.
+    if (err.status === 400 && !isModelError(err) && /response_format|json|reasoning/i.test(err.message)) {
+      const { response_format, reasoning_effort, ...plain } = payload;
+      return callGroq(plain, apiKey);
+    }
+    throw err;
+  }
+}
+
+// Saca el JSON aunque el modelo lo haya envuelto en ```json ... ``` o con texto alrededor.
+function extractJSON(text) {
+  const clean = String(text).replace(/```(?:json)?/gi, "").trim();
+  try { return JSON.parse(clean); } catch { /* sigue */ }
+  const start = clean.indexOf("{");
+  const end = clean.lastIndexOf("}");
+  if (start >= 0 && end > start) return JSON.parse(clean.slice(start, end + 1));
+  throw new SyntaxError("La respuesta no tiene un JSON válido");
 }
 
 export default async function handler(req, res) {
@@ -70,7 +100,8 @@ export default async function handler(req, res) {
   if (consigna.length < 10) return res.status(400).json({ error: "Escribí una consigna un poco más completa." });
   if (consigna.length > MAX_CONSIGNA) return res.status(400).json({ error: `La consigna es muy larga (máximo ${MAX_CONSIGNA} caracteres).` });
 
-  const model = process.env.GROQ_MODEL || DEFAULT_MODEL;
+  const models = [...new Set([process.env.GROQ_MODEL, ...FALLBACK_MODELS].map((m) => (m || "").trim()).filter(Boolean))];
+  let modelIndex = 0;
   const messages = [
     { role: "system", content: buildSystemPrompt(mode) },
     { role: "user", content: `Consigna:\n"""\n${consigna}\n"""` }
@@ -79,9 +110,16 @@ export default async function handler(req, res) {
   let lastError = "";
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
     let content;
+    const model = models[modelIndex];
     try {
       content = await askGroq(messages, model, apiKey);
     } catch (err) {
+      if (isModelError(err) && modelIndex < models.length - 1) {
+        console.warn(`Modelo ${model} no disponible, pruebo ${models[modelIndex + 1]}: ${err.message}`);
+        modelIndex++;
+        attempt--;
+        continue;
+      }
       const status = err.status === 429 ? 429 : 502;
       const msg = err.status === 429
         ? "Se alcanzó el límite de uso de Groq. Probá de nuevo en un rato."
@@ -90,7 +128,7 @@ export default async function handler(req, res) {
     }
 
     try {
-      const project = normalizeProject(JSON.parse(content));
+      const project = normalizeProject(extractJSON(content));
       return res.status(200).json({ project, model });
     } catch (err) {
       lastError = err instanceof ValidationError || err instanceof SyntaxError ? err.message : "respuesta inválida";

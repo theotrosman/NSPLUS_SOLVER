@@ -19,7 +19,7 @@ Creado por **Theo Trosman** — [github.com/theotrosman](https://github.com/theo
 1. Importá este repo en [vercel.com/new](https://vercel.com/new) (Framework preset: **Other**, sin build command).
 2. En **Settings → Environment Variables** agregá:
    - `GROQ_API_KEY` = tu clave de [console.groq.com/keys](https://console.groq.com/keys)
-   - `GROQ_MODEL` (opcional) = modelo de Groq a usar. Por defecto `llama-3.3-70b-versatile`.
+   - `GROQ_MODEL` (opcional) = modelo de Groq a usar. Por defecto `openai/gpt-oss-120b`. Si el modelo elegido deja de existir, la API prueba sola con `openai/gpt-oss-20b` y `qwen/qwen3.8-27b`.
 3. Hacé **Redeploy** para que tome la variable.
 
 La clave queda solo en el servidor (`api/generate.js`); nunca llega al navegador.
