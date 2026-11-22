@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <zoom_level>10</zoom_level>
+  <help_text>// Biblioteca
+// Hecho con ORT Info es fácil · UML Solver · © 2026 Theo Trosman</help_text>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>210</x>
+      <y>70</y>
+      <w>320</w>
+      <h>150</h>
+    </coordinates>
+    <panel_attributes>Biblioteca
+--
+--
++ registrarSocio(string,string,int):void
+- buscarSocio(int):Socio
++ pedirLibro(int,string,string):void
++ devolverLibro(int,string,string):void</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>40</x>
+      <y>360</y>
+      <w>280</w>
+      <h>180</h>
+    </coordinates>
+    <panel_attributes>Socio
+--
+- apellido: string
+- nombre: string
+- numeroDocumento: int
+--
++ pedirLibro(Libro):void
++ devolverLibro(string,string):bool
++ tieneLibroPedido():bool
++ esMismoSocio(int):bool</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>420</x>
+      <y>360</y>
+      <w>270</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>Libro
+--
+- titulo: string
+- autor: string
+--
++ esMismoLibro(string,string):bool</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>100</x>
+      <y>190</y>
+      <w>300</w>
+      <h>200</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+r2=- socios
+m2=0..n</panel_attributes>
+    <additional_attributes>220.0;30.0;220.0;70.0;80.0;70.0;80.0;170.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>340</x>
+      <y>190</y>
+      <w>300</w>
+      <h>200</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+r2=- libros
+m2=0..n</panel_attributes>
+    <additional_attributes>80.0;30.0;80.0;82.0;220.0;82.0;220.0;170.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>200</x>
+      <y>390</y>
+      <w>340</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+r2=- libroPedido
+m2=0..1</panel_attributes>
+    <additional_attributes>120.0;30.0;220.0;30.0</additional_attributes>
+  </element>
+</diagram>

@@ -1,0 +1,25 @@
+{
+  "name": "Club de fútbol",
+  "explanation": "Modo demo (5to, Java). El Club tiene una lista de jugadores y un cuerpo técnico. Jugador y Entrenador son tipos de Persona, que es abstracta porque nunca se crea sola. Cada jugador tiene un puesto, que es un enumerado con valores fijos.",
+  "classes": [
+    { "name": "Club", "kind": "class", "attributes": [{ "name": "nombre", "type": "String" }],
+      "methods": [
+        { "visibility": "+", "name": "agregarJugador", "params": ["Jugador"], "returns": "void" },
+        { "visibility": "-", "name": "buscarJugador", "params": ["int"], "returns": "Jugador" },
+        { "visibility": "+", "name": "cantidadPorPuesto", "params": ["Puesto"], "returns": "int" }
+      ] },
+    { "name": "Persona", "kind": "abstract", "attributes": [{ "name": "nombre", "type": "String" }, { "name": "dni", "type": "int" }],
+      "methods": [ { "visibility": "+", "name": "calcularSueldo", "params": [], "returns": "double", "abstract": true }, { "visibility": "+", "name": "esMismaPersona", "params": ["int"], "returns": "boolean" } ] },
+    { "name": "Jugador", "kind": "class", "attributes": [{ "name": "puesto", "type": "Puesto" }, { "name": "goles", "type": "int" }],
+      "methods": [ { "visibility": "+", "name": "calcularSueldo", "params": [], "returns": "double" }, { "visibility": "+", "name": "sumarGol", "params": [], "returns": "void" } ] },
+    { "name": "Entrenador", "kind": "class", "attributes": [{ "name": "aniosExperiencia", "type": "int" }],
+      "methods": [ { "visibility": "+", "name": "calcularSueldo", "params": [], "returns": "double" } ] },
+    { "name": "Puesto", "kind": "enum", "values": ["ARQUERO", "DEFENSA", "MEDIOCAMPISTA", "DELANTERO"] }
+  ],
+  "relations": [
+    { "from": "Club", "to": "Jugador", "type": "aggregation", "role": "jugadores", "multiplicity": "0..n" },
+    { "from": "Club", "to": "Entrenador", "type": "composition", "role": "entrenador", "multiplicity": "1" },
+    { "from": "Jugador", "to": "Persona", "type": "inheritance" },
+    { "from": "Entrenador", "to": "Persona", "type": "inheritance" }
+  ]
+}

@@ -375,3 +375,24 @@ a.tool-card:hover .tool-go span { transform: translateX(4px); }
 .tool-icon-soon { display: grid; grid-template-rows: none; place-items: center; border: 1.5px dashed var(--line-2); background: transparent; color: var(--muted); font-size: 28px; font-weight: 300; }
 .tool-badge { margin-top: auto; align-self: flex-start; font-size: 12px; font-weight: 700; color: var(--muted); background: var(--surface-2); padding: 4px 10px; border-radius: 999px; }
 @media (prefers-reduced-motion: reduce) { .tool-card, .tool-go span { transition: none; } a.tool-card:hover { transform: none; } }
+/* ---------- UML Solver ---------- */
+.choice .choice-dot { flex: none; width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--line-2); background: var(--surface); transition: all .15s; }
+.choice input:checked + .choice-dot { border-color: var(--accent); box-shadow: inset 0 0 0 4px var(--surface), inset 0 0 0 11px var(--accent); }
+.choice input:focus-visible + .choice-dot { outline: 2px solid var(--accent); outline-offset: 3px; }
+.download-group { display: flex; flex-direction: column; align-items: stretch; gap: 8px; }
+.uml-frame { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 12px; overflow: auto; max-height: 75vh; }
+.uml-frame svg { display: block; margin: 0 auto; max-width: none; }
+.uml-detail { margin-top: 16px; }
+.uml-detail summary { cursor: pointer; font-weight: 700; padding: 6px 0; }
+.uml-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 10px; }
+.uml-summary h3 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.uml-sum-class { background: var(--surface-2); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; }
+.uml-sum-class p { margin: 2px 0 0; font-size: 14px; color: var(--ink-2); }
+.uml-sum-rels { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 14px; color: var(--ink-2); }
+.mini-uml { width: 100%; max-width: 340px; box-shadow: var(--shadow); border-radius: 12px; transform: rotate(-1.2deg); }
+@media (max-width: 760px) { .uml-summary { grid-template-columns: 1fr; } .download-group { width: 100%; } }
+
+/* Ícono de la tarjeta UML en el hall */
+.tool-icon-uml { display: block; background: transparent; border: 0; width: 64px; height: 56px; }
+.tool-icon-uml svg { width: 100%; height: 100%; }.tool-icon-uml { color: var(--ink); }
+.tool-icon-uml rect { fill: var(--surface); }

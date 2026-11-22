@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <zoom_level>10</zoom_level>
+  <help_text>// Club de fútbol
+// Hecho con ORT Info es fácil · UML Solver · © 2026 Theo Trosman</help_text>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>40</x>
+      <y>70</y>
+      <w>250</w>
+      <h>130</h>
+    </coordinates>
+    <panel_attributes>Club
+--
+- nombre: String
+--
++ agregarJugador(Jugador):void
+- buscarJugador(int):Jugador
++ cantidadPorPuesto(Puesto):int</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>390</x>
+      <y>70</y>
+      <w>240</w>
+      <h>130</h>
+    </coordinates>
+    <panel_attributes>/Persona/
+--
+- nombre: String
+- dni: int
+--
+/+ calcularSueldo():double/
++ esMismaPersona(int):boolean</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>80</x>
+      <y>340</y>
+      <w>210</w>
+      <h>130</h>
+    </coordinates>
+    <panel_attributes>Jugador
+--
+- puesto: Puesto
+- goles: int
+--
++ calcularSueldo():double
++ sumarGol():void</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>390</x>
+      <y>340</y>
+      <w>210</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>Entrenador
+--
+- aniosExperiencia: int
+--
++ calcularSueldo():double</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>260</x>
+      <y>610</y>
+      <w>160</w>
+      <h>140</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;enumeration&gt;&gt;
+Puesto
+--
+ARQUERO
+DEFENSA
+MEDIOCAMPISTA
+DELANTERO</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>20</x>
+      <y>170</y>
+      <w>230</w>
+      <h>200</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+r2=- jugadores
+m2=0..n</panel_attributes>
+    <additional_attributes>100.0;30.0;100.0;70.0;130.0;70.0;130.0;170.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>100</x>
+      <y>170</y>
+      <w>470</w>
+      <h>200</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+r2=- entrenador
+m2=1</panel_attributes>
+    <additional_attributes>110.0;30.0;110.0;82.0;360.0;82.0;360.0;170.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>190</x>
+      <y>170</y>
+      <w>310</w>
+      <h>200</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>280.0;30.0;280.0;106.0;30.0;106.0;30.0;170.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>500</x>
+      <y>170</y>
+      <w>80</w>
+      <h>200</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>50.0;30.0;50.0;94.0;30.0;94.0;30.0;170.0</additional_attributes>
+  </element>
+</diagram>

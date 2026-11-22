@@ -3,6 +3,9 @@
   "functions": {
     "api/generate.js": {
       "maxDuration": 120
+    },
+    "api/uml.js": {
+      "maxDuration": 120
     }
   },
   "headers": [

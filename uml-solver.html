@@ -1,0 +1,202 @@
+<!doctype html>
+<!--
+  ORT Info es fácil · UML Solver
+  © 2026 Theo Trosman. Todos los derechos reservados.
+  https://github.com/theotrosman
+-->
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>UML Solver · ORT Info es fácil · por Theo Trosman</title>
+  <meta name="description" content="Pegá una consigna o subí el PDF y obtené el diagrama de clases UML listo para abrir en UMLetino. Creado por Theo Trosman.">
+  <meta name="author" content="Theo Trosman">
+  <meta name="copyright" content="© 2026 Theo Trosman. Todos los derechos reservados.">
+  <link rel="author" href="https://github.com/theotrosman">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231d2433'/%3E%3Cpath d='M6 9h20M6 9l10 9 10-9M16 18v6M6 24h20' stroke='%23f2efe8' stroke-width='2' fill='none'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <nav class="crumbs" aria-label="Ubicación">
+        <a class="brand" href="/">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span class="brand-name">ORT Info es fácil</span>
+        </a>
+        <span class="crumb-sep" aria-hidden="true">/</span>
+        <span class="crumb-current">UML Solver</span>
+      </nav>
+      <a class="byline" href="https://github.com/theotrosman" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.130-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        <span>por <strong>Theo Trosman</strong></span>
+      </a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div class="hero-copy">
+        <h1>De consigna a UML, <span class="nowrap">listo para UMLetino.</span></h1>
+        <p>Pegá el enunciado o subí el PDF. UML Solver detecta las clases, atributos, métodos y relaciones, y te da el diagrama de clases con las flechas ya conectadas.</p>
+        <ul class="hero-points">
+          <li>Sigue la guía de UML de la materia</li>
+          <li>Flechas pegadas, con rol y cardinalidad</li>
+          <li>Se abre directo en UMLetino</li>
+        </ul>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <svg class="mini-uml" viewBox="0 0 330 250" font-family="Segoe UI, Roboto, Arial, sans-serif" font-size="11">
+          <rect x="0" y="0" width="330" height="250" rx="12" fill="#fff"/>
+          <g stroke="#1b2130" fill="#fff" stroke-width="1.2">
+            <rect x="95" y="16" width="140" height="70"/><line x1="95" y1="36" x2="235" y2="36"/><line x1="95" y1="44" x2="235" y2="44"/>
+            <rect x="16" y="150" width="130" height="84"/><line x1="16" y1="170" x2="146" y2="170"/><line x1="16" y1="206" x2="146" y2="206"/>
+            <rect x="190" y="150" width="124" height="70"/><line x1="190" y1="170" x2="314" y2="170"/><line x1="190" y1="196" x2="314" y2="196"/>
+            <path d="M130 86 V118 H80 V150" fill="none"/><path d="M73 143 L80 150 L87 143" fill="none"/>
+            <path d="M200 86 V118 H252 V150" fill="none"/><path d="M245 143 L252 150 L259 143" fill="none"/>
+            <path d="M146 192 H190" fill="none"/><path d="M183 185 L190 192 L183 199" fill="none"/>
+          </g>
+          <g fill="#1b2130">
+            <text x="165" y="30" text-anchor="middle">Biblioteca</text>
+            <text x="100" y="58">+ prestarLibro(int):void</text>
+            <text x="100" y="72">+ devolverLibro(int):void</text>
+            <text x="81" y="164" text-anchor="middle">Socio</text>
+            <text x="21" y="184">- nombre: string</text>
+            <text x="21" y="198">- dni: int</text>
+            <text x="21" y="220">+ tieneLibro():bool</text>
+            <text x="252" y="164" text-anchor="middle">Libro</text>
+            <text x="195" y="186">- titulo: string</text>
+            <text x="86" y="132">- socios</text><text x="86" y="145">0..n</text>
+            <text x="258" y="132">- libros</text><text x="258" y="145">0..n</text>
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <form id="form" class="card composer-card" autocomplete="off">
+      <div class="step-title"><span class="step-num">1</span> Poné la consigna</div>
+
+      <div id="dropzone" class="composer">
+        <textarea id="consigna" name="consigna" rows="9" maxlength="20000" required
+          placeholder="Pegá acá la consigna completa, o arrastrá el PDF a este cuadro…"></textarea>
+        <div class="composer-bar">
+          <label class="btn btn-soft btn-sm">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8zM14 3v5h5M12 18v-6M9 15l3-3 3 3"/></svg>
+            Subir PDF
+            <input id="file" type="file" accept="application/pdf,.pdf,text/plain,.txt" hidden>
+          </label>
+          <button id="clear" class="btn btn-ghost btn-sm" type="button" hidden>Borrar</button>
+          <span class="counter"><span id="count">0</span> / 20.000</span>
+        </div>
+        <div class="drop-overlay" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="34" height="34"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8zM14 3v5h5M12 18v-6M9 15l3-3 3 3"/></svg>
+          Soltá el PDF acá
+        </div>
+      </div>
+      <p id="file-status" class="file-status" hidden></p>
+
+      <div class="step-title"><span class="step-num">2</span> ¿En qué año estás?</div>
+      <div class="toggles" role="radiogroup" aria-label="Año y lenguaje">
+        <label class="toggle choice">
+          <input type="radio" name="lang" value="csharp" checked>
+          <span class="choice-dot" aria-hidden="true"></span>
+          <span class="toggle-text"><strong>3er año · C#</strong> Clases, atributos, métodos y asociaciones (string, int, bool).</span>
+        </label>
+        <label class="toggle choice">
+          <input type="radio" name="lang" value="java">
+          <span class="choice-dot" aria-hidden="true"></span>
+          <span class="toggle-text"><strong>5to año · Java</strong> Suma herencia, abstractas, interfaces, enums, agregación y composición.</span>
+        </label>
+      </div>
+
+      <button id="submit" class="btn btn-primary btn-big" type="submit">
+        <span class="btn-label">Armar el UML</span>
+        <kbd class="kbd">Ctrl ↵</kbd>
+      </button>
+      <p id="form-error" class="form-error" hidden></p>
+    </form>
+
+    <section id="state-loading" class="card state-loading" hidden aria-live="polite">
+      <div class="loading-head">
+        <div class="spinner" aria-hidden="true"></div>
+        <div>
+          <p id="loading-text" class="loading-text">Leyendo la consigna…</p>
+          <p class="muted">Puede tardar hasta un minuto si la consigna es larga.</p>
+        </div>
+      </div>
+      <ol id="loading-steps" class="loading-steps"></ol>
+    </section>
+
+    <section id="state-error" class="card state state-error" hidden aria-live="polite">
+      <div class="error-icon" aria-hidden="true">!</div>
+      <p class="error-title">Uy, no salió</p>
+      <p id="error-text"></p>
+      <button id="retry" class="btn btn-primary" type="button">Probar de nuevo</button>
+    </section>
+
+    <section id="state-result" class="card result-card" hidden aria-live="polite">
+      <div class="result-top">
+        <div>
+          <p class="result-kicker">Listo</p>
+          <h2 id="result-name" class="result-name"></h2>
+          <p id="result-meta" class="muted"></p>
+        </div>
+        <div class="download-group">
+          <button id="download" class="btn btn-primary btn-download" type="button">
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+            Descargar para UMLetino
+          </button>
+          <button id="download-png" class="btn btn-sm" type="button">Descargar imagen PNG</button>
+        </div>
+      </div>
+
+      <ol class="open-steps">
+        <li><span>1</span><p>Descargá el archivo <strong>.uxf</strong>.</p></li>
+        <li><span>2</span><p>Entrá a <a href="https://www.umletino.com/umletino.html" target="_blank" rel="noopener">UMLetino</a> y tocá <strong>File Import</strong> (menú de la izquierda).</p></li>
+        <li><span>3</span><p>Elegí el archivo. Las flechas quedan pegadas: si movés una clase, la siguen.</p></li>
+      </ol>
+
+      <div id="explanation-box" class="explanation">
+        <p class="explanation-title">Cómo lo armé</p>
+        <p id="explanation"></p>
+      </div>
+
+      <div class="uml-frame" id="uml-preview"></div>
+
+      <details class="uml-detail">
+        <summary>Ver el detalle: clases y relaciones</summary>
+        <div id="uml-summary" class="uml-summary"></div>
+      </details>
+
+      <p class="warning">La IA se puede equivocar: revisá que estén todas las clases y relaciones que pide la consigna antes de entregarlo.</p>
+      <div class="result-actions">
+        <button id="regenerate" class="btn" type="button">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6"/></svg>
+          Hacelo de nuevo
+        </button>
+        <button id="new" class="btn btn-ghost" type="button">Hacer otra consigna</button>
+      </div>
+    </section>
+
+    <p class="credit-inline"><a href="/">← Volver a todas las herramientas</a><br>UML Solver fue creado por <a href="https://github.com/theotrosman" target="_blank" rel="noopener">Theo Trosman</a>. © 2026 Theo Trosman. Todos los derechos reservados.</p>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <div>
+        <p class="footer-brand">ORT Info es fácil · UML Solver</p>
+        <p>© <span id="year">2026</span> Theo Trosman. Todos los derechos reservados.</p>
+        <p>Diseñado y desarrollado por <a href="https://github.com/theotrosman" target="_blank" rel="noopener">Theo Trosman</a> · <a href="https://github.com/theotrosman/NSPLUS_SOLVER" target="_blank" rel="noopener">Código en GitHub</a></p>
+      </div>
+      <p class="disclaimer">Sitio independiente y no oficial, hecho por un alumno. No está afiliado a ORT Argentina ni a UMLetino. UMLet/UMLetino es obra de sus autores.</p>
+    </div>
+  </footer>
+
+  <script src="js/uml-layout.js"></script>
+  <script src="js/pdf-text.js"></script>
+  <script src="js/uml-app.js"></script>
+</body>
+</html>

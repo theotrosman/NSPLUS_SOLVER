@@ -14,7 +14,7 @@ const MAX_STATEMENTS = 400;
 
 const str = (v, fallback = "") => (v == null ? fallback : String(v)).trim();
 
-class ValidationError extends Error {}
+import { ValidationError } from "./_groq.js";
 
 function normalizeStatements(list, path, ctx, depth) {
   if (list == null) return [];

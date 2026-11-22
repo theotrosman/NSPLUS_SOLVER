@@ -7,6 +7,7 @@ Página con herramientas simples para la materia de Informática. La página pri
 | Herramienta | Página | Archivo |
 | --- | --- | --- |
 | NS Solver | `/ns-solver` | `ns-solver.html` |
+| UML Solver | `/uml-solver` | `uml-solver.html` |
 
 Para sumar una herramienta nueva: crear su `.html` en la raíz y agregar su tarjeta en `index.html`.
 
@@ -64,7 +65,20 @@ npm test
 | `api/generate.js` | Función de Vercel que consulta a Groq |
 | `api/_prompt.js` | Instrucciones para el modelo |
 | `api/_normalize.js` | Valida y corrige la respuesta de la IA |
+| `api/_groq.js` | Conexión con Groq compartida (reintentos y modelos de respaldo) |
+| `uml-solver.html`, `js/uml-app.js` | Página de UML Solver |
+| `js/uml-layout.js` | Ubica las clases, traza las flechas y arma el `.uxf` y la vista previa |
+| `api/uml.js`, `api/_uml-prompt.js`, `api/_uml-normalize.js` | API, instrucciones y validación del UML |
 
+## UML Solver
+
+De consigna a diagrama de clases UML listo para [UMLetino](https://www.umletino.com/umletino.html). Pegás el enunciado (o subís el PDF), la IA detecta clases, atributos, métodos y relaciones siguiendo la guía de UML de la materia, y descargás un archivo `.uxf` que se abre con **File Import** en UMLetino.
+
+- Estilo de la materia: atributos privados (`- titulo: string`), métodos con tipos (`+ pedirLibro(Libro):void`), colecciones como flecha con rol en plural y cardinalidad (`- socios`, `0..n`), no como atributo.
+- **3er año (C#)**: clases y asociaciones con `string`, `int`, `bool`.
+- **5to año (Java)**: además herencia, clases abstractas, interfaces, enumerados, agregación (rombo blanco) y composición (rombo negro).
+- Ubica las clases solo (quien "tiene" arriba, padres arriba de las hijas) y traza las flechas en ángulo recto con las puntas sobre el borde, así UMLetino las deja pegadas a las clases.
+- Vista previa en la página, descarga en PNG y un detalle de clases y relaciones explicado.
 ## Aviso
 
 Herramienta independiente y no oficial. No está afiliada a ORT ni a NS Plus; NS Plus es obra de sus autores, los profesores C. Daniel Vázquez y Carlos E. Cimino. La IA puede equivocarse: revisá siempre el diagrama con una prueba de escritorio.

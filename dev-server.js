@@ -13,6 +13,8 @@ import { readFile } from "node:fs/promises";
 import { extname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 import handler from "./api/generate.js";
+import umlHandler from "./api/uml.js";
+import { normalizeUml } from "./api/_uml-normalize.js";
 
 const root = fileURLToPath(new URL(".", import.meta.url));
 const PORT = Number(process.env.PORT) || 3000;
@@ -109,6 +111,18 @@ function wrapRes(res) {
 http.createServer(async (req, res) => {
   wrapRes(res);
   const url = new URL(req.url, `http://${req.headers.host}`);
+  if (url.pathname === "/api/uml") {
+    let raw = "";
+    for await (const chunk of req) raw += chunk;
+    try { req.body = JSON.parse(raw || "{}"); } catch { req.body = {}; }
+    if (!process.env.GROQ_API_KEY) {
+      await new Promise((r) => setTimeout(r, 900));
+      const file = req.body.lang === "java" ? "club-java.json" : "biblioteca.json";
+      const demo = JSON.parse((await readFile(join(root, "test", "fixtures", file), "utf8")).replace(/^﻿/, ""));
+      return res.status(200).json({ uml: normalizeUml(demo), model: "demo" });
+    }
+    return umlHandler(req, res);
+  }
   if (url.pathname === "/api/generate") {
     let raw = "";
     for await (const chunk of req) raw += chunk;
