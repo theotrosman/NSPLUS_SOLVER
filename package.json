@@ -1,0 +1,16 @@
+{
+  "name": "nsplus-solver",
+  "version": "1.0.0",
+  "private": true,
+  "description": "NS Solver: de consigna a diagrama Nassi-Shneiderman para NS Plus, con Groq. © 2026 Theo Trosman. Todos los derechos reservados.",
+  "author": "Theo Trosman (https://github.com/theotrosman)",
+  "license": "UNLICENSED",
+  "type": "module",
+  "scripts": {
+    "dev": "node dev-server.js",
+    "test": "node test/normalize.test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
