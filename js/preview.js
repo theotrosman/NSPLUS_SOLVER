@@ -111,7 +111,7 @@
     }));
     var head = el("div", "nsd-head", [
       el("div", "nsd-class", ["class " + d.className + ":"]),
-      el("div", "nsd-sign", [(d.modifiers ? d.modifiers + " " : "") + d.returnType + " " + d.name + "(" + params + ")"]),
+      el("div", "nsd-sign", [[d.modifiers, d.returnType, d.name].filter(Boolean).join(" ") + "(" + params + ")"]),
       (d.variables && d.variables.length) ? vars : null
     ]);
     return el("div", "nsd", [head, seq(d.statements)]);

@@ -96,13 +96,14 @@ export default async function handler(req, res) {
     try { body = JSON.parse(body); } catch { body = {}; }
   }
   const consigna = String(body?.consigna || "").replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+  const options = { modular: body?.modular === true, classes: body?.classes === true };
   if (consigna.length < 10) return res.status(400).json({ error: "Escribí una consigna un poco más completa." });
   if (consigna.length > MAX_CONSIGNA) return res.status(400).json({ error: "La consigna es demasiado larga. Probá pegando un ejercicio por vez." });
 
   const models = [...new Set([process.env.GROQ_MODEL, ...FALLBACK_MODELS].map((m) => (m || "").trim()).filter(Boolean))];
   let modelIndex = 0;
   const messages = [
-    { role: "system", content: buildSystemPrompt() },
+    { role: "system", content: buildSystemPrompt(options) },
     { role: "user", content: `Consigna:\n"""\n${consigna}\n"""` }
   ];
 

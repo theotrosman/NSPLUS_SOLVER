@@ -41,6 +41,65 @@ const DEMO = {
   }]
 };
 
+const DEMO_MODULAR = {
+  name: "Demo notas modularizadas",
+  explanation: "Modo demo. main pide tres notas usando ingresarNota, las suma con sumarNotas, saca el promedio con calcularPromedio y lo muestra con mostrarPromedio.",
+  diagrams: [
+    { className: "Programa", modifiers: "public", returnType: "void", name: "main", parameters: [],
+      variables: [{ type: "int", name: "nota1" }, { type: "int", name: "nota2" }, { type: "int", name: "nota3" }, { type: "int", name: "suma" }, { type: "double", name: "promedio" }],
+      statements: [
+        { type: "assignment", variable: "nota1", value: "ingresarNota()" },
+        { type: "assignment", variable: "nota2", value: "ingresarNota()" },
+        { type: "assignment", variable: "nota3", value: "ingresarNota()" },
+        { type: "assignment", variable: "suma", value: "sumarNotas(nota1, nota2, nota3)" },
+        { type: "assignment", variable: "promedio", value: "calcularPromedio(suma)" },
+        { type: "call", statement: "mostrarPromedio(promedio)" }
+      ] },
+    { className: "Programa", modifiers: "public", returnType: "int", name: "ingresarNota", parameters: [], variables: [{ type: "int", name: "nota" }],
+      statements: [{ type: "output", message: "\"Ingrese nota\"" }, { type: "input", variable: "nota" }, { type: "return", value: "nota" }] },
+    { className: "Programa", modifiers: "public", returnType: "int", name: "sumarNotas", parameters: [{ type: "int", name: "n1" }, { type: "int", name: "n2" }, { type: "int", name: "n3" }], variables: [{ type: "int", name: "suma" }],
+      statements: [{ type: "assignment", variable: "suma", value: "n1 + n2 + n3" }, { type: "return", value: "suma" }] },
+    { className: "Programa", modifiers: "public", returnType: "double", name: "calcularPromedio", parameters: [{ type: "int", name: "s" }], variables: [{ type: "double", name: "p" }],
+      statements: [{ type: "assignment", variable: "p", value: "s / 3.0" }, { type: "return", value: "p" }] },
+    { className: "Programa", modifiers: "public", returnType: "void", name: "mostrarPromedio", parameters: [{ type: "double", name: "p" }], variables: [],
+      statements: [{ type: "output", message: "\"La nota final es \" + p" }] }
+  ]
+};
+
+const DEMO_CLASSES = {
+  name: "Demo club y jugadores",
+  explanation: "Modo demo. Hay dos clases: Jugador guarda nombre y edad, y Club guarda la lista de jugadores. main crea el club, carga 3 jugadores y muestra cuántos son mayores de edad.",
+  diagrams: [
+    { className: "Programa", modifiers: "public", returnType: "void", name: "main", parameters: [],
+      variables: [{ type: "Club", name: "club" }, { type: "Jugador", name: "j" }, { type: "string", name: "nombre" }, { type: "int", name: "edad" }, { type: "int", name: "i" }],
+      statements: [
+        { type: "assignment", variable: "club", value: "new Club(\"River\")" },
+        { type: "for", variable: "i", start: "1", stop: "3", step: "1", statements: [
+          { type: "output", message: "\"Nombre del jugador\"" }, { type: "input", variable: "nombre" },
+          { type: "output", message: "\"Edad\"" }, { type: "input", variable: "edad" },
+          { type: "assignment", variable: "j", value: "new Jugador(nombre, edad)" },
+          { type: "call", statement: "club.agregarJugador(j)" }
+        ] },
+        { type: "output", message: "\"Mayores: \" + club.contarMayores()" }
+      ] },
+    { className: "Club", modifiers: "public", returnType: "", name: "Club", parameters: [{ type: "string", name: "nombre" }], variables: [],
+      statements: [{ type: "assignment", variable: "this.nombre", value: "nombre" }, { type: "assignment", variable: "this.jugadores", value: "new List<Jugador>()" }] },
+    { className: "Club", modifiers: "public", returnType: "void", name: "agregarJugador", parameters: [{ type: "Jugador", name: "j" }], variables: [],
+      statements: [{ type: "call", statement: "this.jugadores.Add(j)" }] },
+    { className: "Club", modifiers: "public", returnType: "int", name: "contarMayores", parameters: [], variables: [{ type: "int", name: "cant", value: "0" }],
+      statements: [
+        { type: "foreach", class: "Jugador", variable: "j", collection: "this.jugadores", statements: [
+          { type: "if", condition: "j.getEdad() >= 18", then: [{ type: "assignment", variable: "cant", value: "cant + 1" }], else: [] }
+        ] },
+        { type: "return", value: "cant" }
+      ] },
+    { className: "Jugador", modifiers: "public", returnType: "", name: "Jugador", parameters: [{ type: "string", name: "nombre" }, { type: "int", name: "edad" }], variables: [],
+      statements: [{ type: "assignment", variable: "this.nombre", value: "nombre" }, { type: "assignment", variable: "this.edad", value: "edad" }] },
+    { className: "Jugador", modifiers: "public", returnType: "int", name: "getEdad", parameters: [], variables: [],
+      statements: [{ type: "return", value: "this.edad" }] }
+  ]
+};
+
 function wrapRes(res) {
   res.status = (code) => { res.statusCode = code; return res; };
   res.json = (obj) => { res.setHeader("Content-Type", "application/json; charset=utf-8"); res.end(JSON.stringify(obj)); return res; };
@@ -56,7 +115,8 @@ http.createServer(async (req, res) => {
     try { req.body = JSON.parse(raw || "{}"); } catch { req.body = {}; }
     if (!process.env.GROQ_API_KEY) {
       await new Promise((r) => setTimeout(r, 900));
-      return res.status(200).json({ project: DEMO, model: "demo" });
+      const demo = req.body.classes ? DEMO_CLASSES : req.body.modular ? DEMO_MODULAR : DEMO;
+      return res.status(200).json({ project: demo, model: "demo" });
     }
     return handler(req, res);
   }

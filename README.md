@@ -8,10 +8,14 @@ Creado por **Theo Trosman** — [github.com/theotrosman](https://github.com/theo
 
 ## Qué hace
 
-- Sin opciones ni configuraciones: pegás la consigna (o subís el PDF), tocás **Resolver** y descargás.
+- Muy simple: pegás la consigna (o subís el PDF), tocás **Resolver** y descargás.
+- Dos interruptores opcionales, según lo que pida la consigna:
+  - **Modularizar**: `main` llama a métodos que hacen una sola cosa cada uno (`nota1 ← ingresarNota()`, llamadas a métodos `void`), como en el ejemplo "Notas y promedios modularizados" de la materia.
+  - **Usar clases y objetos**: clases con constructor (`public Club(string nombre)` y `this.nombre ← nombre`), métodos, objetos creados con `new` y listas `List<T>` (`Add`, `Remove`, `Count`, `[i]`, `foreach`). No usa `Find()` ni `Contains()`, por disposición de la cátedra.
+- Sintaxis y tipos de C# (`int`, `double`, `bool`, `string`), como en la materia.
 - Lee el texto de PDFs directo en el navegador (con pdf.js). Los PDFs escaneados como foto no se pueden leer.
 - Acepta consignas largas (hasta 20.000 caracteres). Si el texto trae varios ejercicios, arma un diagrama por ejercicio.
-- Resuelve de la forma más simple posible, como lo haría un alumno de 15 años: un solo diagrama `main`, estructuras básicas y nombres de variables claros.
+- Resuelve de la forma más simple posible, como lo haría un alumno de 15 años: estructuras básicas, pocas variables y nombres claros. Con los interruptores apagados, todo va en un solo diagrama `main`.
 - Explica la lógica con palabras simples.
 - Exporta un `.nsplus` que NS Plus abre con el botón de abrir proyecto.
 

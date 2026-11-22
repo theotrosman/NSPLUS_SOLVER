@@ -37,9 +37,15 @@
       return block("option " + side, opt);
     }
 
+    // Igual que NS Plus: una caja vacía antes, entre y después de cada instrucción
+    // (son los lugares donde se pueden soltar bloques nuevos al editar).
+    function seq(statements) {
+      if (!statements || !statements.length) return empty();
+      return empty() + statements.map(function (s) { return stmt(s) + empty(); }).join("");
+    }
+
     function list(cls, statements) {
-      var inner = statements && statements.length ? statements.map(stmt).join("") : empty();
-      return block(cls, inner);
+      return block(cls, seq(statements));
     }
 
     function loop(controlHtml, statements, cls) {
@@ -117,12 +123,10 @@
           block("method-type", input(d.returnType)) +
           block("method-name", input(d.name)) +
           fixed("(") + block("method-parameters", params) + fixed(")")));
-      var vars = (d.variables || []).slice().sort(function (a, b) {
-        return (/\bfinal\b/.test(b.type) ? 1 : 0) - (/\bfinal\b/.test(a.type) ? 1 : 0);
-      });
+      var isConst = function (v) { return /\b(final|const)\b/.test(v.type) ? 1 : 0; };
+      var vars = (d.variables || []).slice().sort(function (a, b) { return isConst(b) - isConst(a); });
       var locals = block("local-variable-declaration", vars.map(variable).join(""));
-      var statements = d.statements && d.statements.length ? d.statements.map(stmt).join("") : empty();
-      return decl + locals + block("statements", statements, "true");
+      return decl + locals + block("statements", seq(d.statements), "true");
     }
 
     return { diagram: diagram };

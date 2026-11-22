@@ -55,6 +55,20 @@
       </div>
       <p id="file-status" class="file-status" hidden></p>
 
+      <div class="toggles">
+        <p class="toggles-title">¿Qué te piden? <span class="muted">Si no dice nada, dejalos apagados.</span></p>
+        <label class="toggle">
+          <input id="opt-modular" type="checkbox" role="switch">
+          <span class="toggle-track" aria-hidden="true"><span class="toggle-thumb"></span></span>
+          <span class="toggle-text"><strong>Modularizar</strong> Dividir el programa en métodos (main llama a los demás).</span>
+        </label>
+        <label class="toggle">
+          <input id="opt-classes" type="checkbox" role="switch">
+          <span class="toggle-track" aria-hidden="true"><span class="toggle-thumb"></span></span>
+          <span class="toggle-text"><strong>Usar clases y objetos</strong> Clases con constructor, atributos, métodos y listas.</span>
+        </label>
+      </div>
+
       <div class="step-title"><span class="step-num">2</span> Tocá resolver</div>
       <button id="submit" class="btn btn-primary btn-big" type="submit">
         <span class="btn-label">Resolver</span>

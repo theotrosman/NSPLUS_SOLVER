@@ -44,6 +44,25 @@
     el.classList.toggle("is-error", !!isError);
   }
 
+  /* --- Interruptores: modularizar / clases --- */
+  var OPTS_KEY = "ns-solver:opts";
+  var optModular = $("opt-modular"), optClasses = $("opt-classes");
+
+  function syncToggles() {
+    // Con clases siempre hay métodos, así que modularizar queda prendido.
+    if (optClasses.checked) optModular.checked = true;
+    optModular.disabled = optClasses.checked;
+    try { localStorage.setItem(OPTS_KEY, JSON.stringify({ modular: optModular.checked, classes: optClasses.checked })); } catch (e) { /* nada */ }
+  }
+  try {
+    var savedOpts = JSON.parse(localStorage.getItem(OPTS_KEY) || "{}");
+    optModular.checked = !!savedOpts.modular;
+    optClasses.checked = !!savedOpts.classes;
+  } catch (e) { /* nada */ }
+  optModular.addEventListener("change", syncToggles);
+  optClasses.addEventListener("change", syncToggles);
+  syncToggles();
+
   consigna.addEventListener("input", function () { formError(""); });
   consigna.addEventListener("keydown", function (e) {
     if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); form.requestSubmit(); }
@@ -143,7 +162,7 @@
       var res = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ consigna: text })
+        body: JSON.stringify({ consigna: text, modular: optModular.checked, classes: optClasses.checked })
       });
       var data = await res.json().catch(function () { return {}; });
       if (!res.ok || !data.project) throw new Error(data.error || "Algo falló en el servidor. Probá de nuevo.");
@@ -167,7 +186,18 @@
     $("explanation-box").hidden = !p.explanation;
     var box = $("diagrams");
     box.innerHTML = "";
-    p.diagrams.forEach(function (d) { box.appendChild(NSPreview.renderDiagram(d)); });
+    var classes = p.diagrams.map(function (d) { return d.className; }).filter(function (c, i, all) { return all.indexOf(c) === i; });
+    var lastClass = null;
+    p.diagrams.forEach(function (d) {
+      if (classes.length > 1 && d.className !== lastClass) {
+        var h = document.createElement("h3");
+        h.className = "class-title";
+        h.textContent = "Clase " + d.className;
+        box.appendChild(h);
+        lastClass = d.className;
+      }
+      box.appendChild(NSPreview.renderDiagram(d));
+    });
     if (scroll) show("result");
     else Object.keys(views).forEach(function (k) { views[k].hidden = k !== "result"; });
   }

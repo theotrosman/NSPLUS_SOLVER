@@ -75,7 +75,7 @@ function normalizeDecl(list, path) {
 export function normalizeProject(raw) {
   if (!raw || typeof raw !== "object") throw new ValidationError("La respuesta no es un objeto JSON");
   if (!Array.isArray(raw.diagrams) || raw.diagrams.length === 0) throw new ValidationError('Falta la lista "diagrams"');
-  if (raw.diagrams.length > 15) throw new ValidationError("Demasiados diagramas");
+  if (raw.diagrams.length > 40) throw new ValidationError("Demasiados diagramas");
   const ctx = { count: 0 };
   return {
     name: str(raw.name, "Proyecto NS Solver").slice(0, 80) || "Proyecto NS Solver",
@@ -85,12 +85,16 @@ export function normalizeProject(raw) {
       if (!d || typeof d !== "object") throw new ValidationError(`${path} no es un objeto`);
       if (!str(d.name)) throw new ValidationError(`${path} necesita "name"`);
       const statements = normalizeStatements(d.statements, `${path}.statements`, ctx, 0);
-      if (statements.length === 0) throw new ValidationError(`${path} no tiene instrucciones`);
+      const className = str(d.className, "Programa") || "Programa";
+      const name = str(d.name);
+      const isConstructor = name === className;
+      if (statements.length === 0 && !isConstructor) throw new ValidationError(`${path} no tiene instrucciones`);
       return {
-        className: str(d.className, "Principal") || "Principal",
+        className,
         modifiers: str(d.modifiers, "public"),
-        returnType: str(d.returnType, "void") || "void",
-        name: str(d.name),
+        // Los constructores no tienen tipo de retorno (public Club()).
+        returnType: isConstructor ? "" : (str(d.returnType, "void") || "void"),
+        name,
         parameters: normalizeDecl(d.parameters, `${path}.parameters`),
         variables: normalizeDecl(d.variables, `${path}.variables`),
         statements
