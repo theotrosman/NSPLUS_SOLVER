@@ -32,19 +32,21 @@
   var text = box.querySelector(".cc-text"), status = box.querySelector(".cc-status"), list = box.querySelector(".cc-items");
   function setStatus(msg, bad) { status.textContent = msg || ""; status.classList.toggle("is-error", !!bad); }
 
-  box.querySelector(".cc-file").addEventListener("change", async function (e) {
+  var fileInput = box.querySelector(".cc-file");
+  if (window.FileText) fileInput.setAttribute("accept", window.FileText.ACCEPT);
+  fileInput.addEventListener("change", async function (e) {
     var f = e.target.files[0];
     e.target.value = "";
     if (!f) return;
     setStatus("Leyendo " + f.name + "…");
     try {
-      var t = /pdf/i.test(f.type) || /\.pdf$/i.test(f.name) ? await window.PDFText.extractText(f) : await f.text();
-      if (t.replace(/\s/g, "").length < 15) throw new Error("vacío");
+      var t = await window.FileText.read(f);
+      if (t.replace(/\s/g, "").length < 15) throw new Error("No pude leer texto de ese archivo (puede ser una foto o un escaneo).");
       text.value = t.slice(0, 20000);
       setStatus("Listo. Buscando ejercicios…");
       find();
     } catch (err) {
-      setStatus("No pude leer texto de ese PDF. Copiá y pegá la consigna.", true);
+      setStatus(err.message || "No pude leer ese archivo. Copiá y pegá la consigna.", true);
     }
   });
   box.querySelector(".cc-go").addEventListener("click", find);

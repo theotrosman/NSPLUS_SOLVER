@@ -18,6 +18,7 @@ import pcHandler, { normalizePc } from "./api/pc.js";
 import extractHandler from "./api/extract.js";
 import sqlHandler from "./api/sql.js";
 import adaptHandler from "./api/adapt.js";
+import detectHandler from "./api/detect.js";
 import { normalizeUml } from "./api/_uml-normalize.js";
 
 const root = fileURLToPath(new URL(".", import.meta.url));
@@ -123,6 +124,15 @@ const EXTRA = {
       { label: "1", statement: "Listar los alumnos ordenados por apellido", sql: "SELECT Nombre, Apellido\nFROM Alumnos\nORDER BY Apellido;", explanation: "Trae nombre y apellido de todos los alumnos, ordenados de la A a la Z por apellido." },
       { label: "2", statement: "Cantidad de alumnos por curso", sql: "SELECT C.Nombre, COUNT(A.IdAlumno) AS Cantidad\nFROM Cursos AS C\nINNER JOIN Alumnos AS A ON A.IdCurso = C.IdCurso\nGROUP BY C.Nombre;", explanation: "Une cursos con alumnos y cuenta cuántos alumnos hay en cada curso." }
     ] } }) },
+  "/api/detect": { handler: detectHandler, demo: (b) => {
+    // Demo: coincidencia simple de palabras del label en la consigna
+    const text = String(b.consigna || "").toLowerCase();
+    const keys = (b.options || []).filter((o) => {
+      const words = String(o.label || "").toLowerCase().split(/[^a-záéíóúñ0-9#+]+/).filter((w) => w.length > 3);
+      return words.some((w) => text.includes(w));
+    }).map((o) => o.key);
+    return { model: "demo", keys };
+  } },
   "/api/adapt": { handler: adaptHandler, demo: (b) => ({ model: "demo", result: {
     code: String(b.code || "").replace(/display:\s*grid/g, "display: flex"), changes: [{ before: "display: grid", after: "display: flex", why: "Modo demo: si Grid no se vio, se arma la misma fila con Flexbox." }],
     used: ["Flexbox"], notes: "Modo demo (sin GROQ_API_KEY): solo se muestra un ejemplo de cambio." } }) }

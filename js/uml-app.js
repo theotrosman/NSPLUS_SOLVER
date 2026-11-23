@@ -80,19 +80,36 @@
   });
   $("clear").addEventListener("click", function () { consigna.value = ""; fileStatus(""); updateCount(); consigna.focus(); });
 
-  /* --- PDF --- */
+  /* --- Autodetección del lenguaje/año desde la consigna --- */
+  var LANG_OPTS = [
+    { key: "java", label: "Java (5to año): extends, ArrayList, interfaces, herencia, System.out, boolean con minúscula" },
+    { key: "csharp", label: "C# (3er año): List<>, string, Console, propiedades de C#" }
+  ];
+  var lastDetected = "";
+  async function detectLang() {
+    if (!window.AITool) return;
+    var text = consigna.value.trim();
+    if (text.length < 15 || text === lastDetected) return;
+    lastDetected = text;
+    var keys = await window.AITool.detect(text, LANG_OPTS);
+    var want = keys.indexOf("java") >= 0 ? "java" : keys.indexOf("csharp") >= 0 ? "csharp" : null;
+    if (want && lang() !== want) {
+      var r = form.querySelector('input[name="lang"][value="' + want + '"]');
+      if (r) { r.checked = true; try { localStorage.setItem(LANG_KEY, want); } catch (e) { /* nada */ } toast("Según la consigna, usé " + (want === "java" ? "Java (5to)" : "C# (3ro)") + "."); }
+    }
+  }
+  consigna.addEventListener("paste", function () { setTimeout(detectLang, 60); });
+
+  /* --- Subir la consigna (PDF, Word, texto) --- */
   async function loadFile(file) {
     if (!file) return;
     formError("");
-    var isPdf = /pdf$/i.test(file.type) || /\.pdf$/i.test(file.name);
-    var isTxt = /^text\//.test(file.type) || /\.txt$/i.test(file.name);
-    if (!isPdf && !isTxt) { fileStatus("Ese archivo no es un PDF. Subí un PDF o pegá el texto.", true); return; }
-    if (file.size > 25 * 1024 * 1024) { fileStatus("El PDF es muy pesado (más de 25 MB).", true); return; }
+    if (file.size > 25 * 1024 * 1024) { fileStatus("El archivo es muy pesado (más de 25 MB).", true); return; }
     fileStatus("Leyendo " + file.name + "…");
     try {
-      var text = isPdf ? await PDFText.extractText(file) : (await file.text()).trim();
+      var text = (await FileText.read(file)).trim();
       if (text.replace(/\s/g, "").length < 20) {
-        fileStatus("No pude leer texto de ese PDF (parece una foto o un escaneo). Copiá la consigna y pegala arriba.", true);
+        fileStatus("No pude leer texto de ese archivo (parece una foto o un escaneo). Copiá la consigna y pegala arriba.", true);
         return;
       }
       if (text.length > MAX_LEN) {
@@ -104,9 +121,10 @@
       consigna.value = text;
       consigna.scrollTop = 0;
       updateCount();
+      detectLang();
     } catch (err) {
       console.error(err);
-      fileStatus("No pude abrir ese PDF. Probá de nuevo o copiá y pegá la consigna.", true);
+      fileStatus(err.message || "No pude abrir ese archivo. Probá de nuevo o copiá y pegá la consigna.", true);
     }
   }
   $("file").addEventListener("change", function (e) { loadFile(e.target.files[0]); e.target.value = ""; });

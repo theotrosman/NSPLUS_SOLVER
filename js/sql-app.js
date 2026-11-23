@@ -26,7 +26,14 @@
   function show(n) { Object.keys(views).forEach(function (k) { views[k].hidden = k !== n; }); if (n) views[n].scrollIntoView({ behavior: "smooth", block: "start" }); }
   function count() { $("count").textContent = $("consigna").value.length.toLocaleString("es-AR"); }
   $("consigna").addEventListener("input", function () { count(); $("form-error").hidden = true; });
-  T.attachUpload($("consigna"), $("file"), $("file-status"));
+
+  // Autodetección: la IA lee la consigna y prende los temas que pide expresamente
+  function applyKeys(keys) {
+    var changed = topics.turnOn(keys);
+    if (changed.length) T.toast("Activé por la consigna: " + changed.join(", "));
+  }
+  var auto = T.autoDetect($("consigna"), TOPICS, applyKeys);
+  T.attachUpload($("consigna"), $("file"), $("file-status"), { onText: function () { auto.run(); } });
   T.attachUpload($("schema"), $("schema-file"), $("schema-status"), { max: 6000 });
   $("all-on").addEventListener("click", function () { topics.setAll(true); });
   $("all-off").addEventListener("click", function () { topics.setAll(false); });

@@ -47,14 +47,14 @@
     var st = $("file-status");
     st.hidden = false; st.classList.remove("is-error"); st.textContent = "Leyendo " + f.name + "…";
     try {
-      var text = /pdf/i.test(f.type) || /\.pdf$/i.test(f.name) ? await PDFText.extractText(f) : await f.text();
-      if (text.replace(/\s/g, "").length < 20) throw new Error("vacío");
+      var text = await FileText.read(f);
+      if (text.replace(/\s/g, "").length < 20) throw new Error("No pude leer texto de ese archivo (puede ser una foto o un escaneo).");
       consigna.value = text.slice(0, 20000);
       updateCount();
       st.textContent = "Listo, cargué " + f.name + ".";
     } catch (err) {
       st.classList.add("is-error");
-      st.textContent = "No pude leer texto de ese archivo. Copiá y pegá la situación.";
+      st.textContent = err.message || "No pude leer ese archivo. Copiá y pegá la situación.";
     }
   });
 

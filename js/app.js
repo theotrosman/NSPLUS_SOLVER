@@ -88,25 +88,38 @@
     if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); form.requestSubmit(); }
   });
 
-  /* --- PDF --- */
+  /* --- Autodetección de los interruptores desde la consigna --- */
+  var NS_OPTS = [
+    { key: "modular", label: "Modularizar: dividir el programa en métodos, funciones o procedimientos" },
+    { key: "classes", label: "Usar clases y objetos (POO), constructores, atributos" }
+  ];
+  var lastDetected = "";
+  async function detectToggles() {
+    if (!window.AITool) return;
+    var text = consigna.value.trim();
+    if (text.length < 15 || text === lastDetected) return;
+    lastDetected = text;
+    var keys = await window.AITool.detect(text, NS_OPTS);
+    var changed = [];
+    if (keys.indexOf("classes") >= 0 && !optClasses.checked) { optClasses.checked = true; changed.push("Usar clases y objetos"); }
+    if (keys.indexOf("modular") >= 0 && !optModular.checked && !optClasses.checked) { optModular.checked = true; changed.push("Modularizar"); }
+    if (changed.length) { syncToggles(); toast("Activé por la consigna: " + changed.join(", ")); }
+  }
+  consigna.addEventListener("paste", function () { setTimeout(detectToggles, 60); });
+
+  /* --- Subir la consigna (PDF, Word, texto) --- */
   async function loadFile(file) {
     if (!file) return;
     formError("");
-    var isPdf = /pdf$/i.test(file.type) || /\.pdf$/i.test(file.name);
-    var isTxt = /^text\//.test(file.type) || /\.txt$/i.test(file.name);
-    if (!isPdf && !isTxt) {
-      fileStatus("Ese archivo no es un PDF. Subí un PDF o pegá el texto.", true);
-      return;
-    }
     if (file.size > 25 * 1024 * 1024) {
-      fileStatus("El PDF es muy pesado (más de 25 MB).", true);
+      fileStatus("El archivo es muy pesado (más de 25 MB).", true);
       return;
     }
     fileStatus("Leyendo " + file.name + "…");
     try {
-      var text = isPdf ? await PDFText.extractText(file) : (await file.text()).trim();
+      var text = (await FileText.read(file)).trim();
       if (text.replace(/\s/g, "").length < 20) {
-        fileStatus("No pude leer texto de ese PDF (parece una foto o un escaneo). Copiá la consigna y pegala arriba.", true);
+        fileStatus("No pude leer texto de ese archivo (parece una foto o un escaneo). Copiá la consigna y pegala arriba.", true);
         return;
       }
       if (text.length > MAX_LEN) {
@@ -118,9 +131,10 @@
       consigna.value = text;
       consigna.scrollTop = 0;
       updateCount();
+      detectToggles();
     } catch (err) {
       console.error(err);
-      fileStatus("No pude abrir ese PDF. Probá de nuevo o copiá y pegá la consigna.", true);
+      fileStatus(err.message || "No pude abrir ese archivo. Probá de nuevo o copiá y pegá la consigna.", true);
     }
   }
 

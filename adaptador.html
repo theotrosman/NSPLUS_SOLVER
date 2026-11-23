@@ -50,7 +50,7 @@
       <div class="composer">
         <textarea id="code" class="mono-area" rows="12" maxlength="14000" spellcheck="false" placeholder="Pegá acá el código (o subí el archivo)…"></textarea>
         <div class="composer-bar">
-          <label class="btn btn-soft btn-sm">Subir archivo<input id="code-file" type="file" accept=".html,.htm,.css,.js,.sql,.cs,.java,.txt,.pdf,text/*,application/pdf" hidden></label>
+          <label class="btn btn-soft btn-sm">Subir archivo<input id="code-file" type="file" accept=".pdf,.docx,.rtf,.txt,.csv,.md,.sql,.html,.htm,.css,.js,.cs,.java,.json,.xml,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/*" hidden></label>
           <span class="counter"><span id="count">0</span> / 14.000</span>
         </div>
       </div>
@@ -60,7 +60,7 @@
         <summary>Sumar la consigna del trabajo (PDF o texto, opcional)</summary>
         <div class="composer" style="margin-top:10px">
           <textarea id="consigna" rows="5" maxlength="5000" placeholder="Pegá la consigna o subí el PDF: así se asegura de que el código siga cumpliendo todo."></textarea>
-          <div class="composer-bar"><label class="btn btn-soft btn-sm">Subir PDF<input id="consigna-file" type="file" accept="application/pdf,.pdf,text/plain,.txt" hidden></label></div>
+          <div class="composer-bar"><label class="btn btn-soft btn-sm">Subir PDF<input id="consigna-file" type="file" accept=".pdf,.docx,.rtf,.txt,.csv,.md,.sql,.html,.htm,.css,.js,.cs,.java,.json,.xml,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/*" hidden></label></div>
         </div>
         <p id="consigna-status" class="file-status" hidden></p>
       </details>
@@ -120,6 +120,7 @@
   </footer>
 
   <script src="js/pdf-text.js"></script>
+  <script src="js/file-text.js"></script>
   <script src="js/entregable.js"></script>
   <script src="js/ai-tool.js"></script>
   <script src="js/adapt-app.js"></script>

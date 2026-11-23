@@ -56,7 +56,21 @@
   function count() { $("count").textContent = $("code").value.length.toLocaleString("es-AR"); }
   $("code").addEventListener("input", function () { count(); $("form-error").hidden = true; });
   T.attachUpload($("code"), $("code-file"), $("code-status"), { max: 14000 });
-  T.attachUpload($("consigna"), $("consigna-file"), $("consigna-status"), { max: 5000 });
+
+  // Autodetección: si la consigna nombra un tema (ej "usando grid"), se prende solo
+  function applyKeys(keys) {
+    if (!topics) return;
+    var changed = topics.turnOn(keys);
+    if (changed.length) T.toast("Activé por la consigna: " + changed.join(", "));
+  }
+  function detectFromConsigna() {
+    var text = $("consigna").value.trim();
+    if (text.length < 15 || !topics) return;
+    var opts = PRESETS[preset()].topics.map(function (t) { return { key: t, label: t }; });
+    T.detect(text, opts).then(applyKeys);
+  }
+  $("consigna").addEventListener("paste", function () { setTimeout(detectFromConsigna, 60); });
+  T.attachUpload($("consigna"), $("consigna-file"), $("consigna-status"), { max: 5000, onText: detectFromConsigna });
   $("all-on").addEventListener("click", function () { topics.setAll(true); });
   $("all-off").addEventListener("click", function () { topics.setAll(false); });
   // Tab dentro del código inserta espacios

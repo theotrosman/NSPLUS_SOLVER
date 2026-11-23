@@ -9,9 +9,10 @@
 
   function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
 
-  // Conecta un textarea con un botón de "Subir PDF" (o archivo de texto) y un contador
+  // Conecta un textarea con un botón de "Subir archivo" (PDF, Word, texto) y un contador
   function attachUpload(textarea, fileInput, statusEl, opts) {
     opts = opts || {};
+    if (global.FileText && fileInput) fileInput.setAttribute("accept", global.FileText.ACCEPT);
     fileInput.addEventListener("change", async function (e) {
       var f = e.target.files[0];
       e.target.value = "";
@@ -20,17 +21,44 @@
       statusEl.classList.remove("is-error");
       statusEl.textContent = "Leyendo " + f.name + "…";
       try {
-        var isPdf = /pdf/i.test(f.type) || /\.pdf$/i.test(f.name);
-        var t = isPdf ? await global.PDFText.extractText(f) : await f.text();
-        if (t.replace(/\s/g, "").length < 5) throw new Error("vacío");
+        var t = await global.FileText.read(f);
+        if (t.replace(/\s/g, "").length < 5) throw new Error("No pude leer texto de ese archivo (puede ser una foto o un escaneo).");
         textarea.value = t.slice(0, opts.max || 20000);
         textarea.dispatchEvent(new Event("input"));
         statusEl.textContent = "Listo, cargué " + f.name + ".";
+        if (opts.onText) opts.onText(textarea.value);
       } catch (err) {
         statusEl.classList.add("is-error");
-        statusEl.textContent = "No pude leer ese archivo. Copiá y pegá el texto.";
+        statusEl.textContent = err.message || "No pude leer ese archivo. Copiá y pegá el texto.";
       }
     });
+  }
+
+  // Le pregunta a la IA qué temas de "options" pide EXPRESAMENTE la consigna.
+  // options: [{ key, label, hint? }] → devuelve las claves detectadas.
+  async function detect(consigna, options) {
+    if (!consigna || consigna.trim().length < 15) return [];
+    try {
+      var res = await fetch("/api/detect", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ consigna: consigna, options: options }) });
+      var data = await res.json().catch(function () { return {}; });
+      return res.ok && Array.isArray(data.keys) ? data.keys : [];
+    } catch (e) { return []; }
+  }
+
+  // Conecta la autodetección a un textarea: corre al subir un archivo y al pegar texto.
+  // apply(keys) recibe las claves detectadas (se encarga de prender los interruptores).
+  function autoDetect(textarea, options, apply, label) {
+    var lastText = "";
+    label = label || "la consigna";
+    async function run() {
+      var text = textarea.value.trim();
+      if (text.length < 15 || text === lastText) return;
+      lastText = text;
+      var keys = await detect(text, options);
+      if (keys.length) apply(keys);
+    }
+    textarea.addEventListener("paste", function () { setTimeout(run, 60); });
+    return { run: run, reset: function () { lastText = ""; } };
   }
 
   // Interruptores de temas: [{ key, label }] → chips con checkbox
@@ -52,7 +80,17 @@
     function save() { try { localStorage.setItem(storageKey, JSON.stringify(get())); } catch (e) { /* nada */ } }
     function get() { return Array.prototype.filter.call(container.querySelectorAll("input"), function (c) { return c.checked; }).map(function (c) { return c.value; }); }
     function setAll(v) { container.querySelectorAll("input").forEach(function (c) { c.checked = v; }); save(); }
-    return { get: get, setAll: setAll };
+    // Prende (sin apagar nada) las claves pedidas; devuelve las que estaban apagadas y se encendieron.
+    function turnOn(keys) {
+      var changed = [];
+      keys.forEach(function (k) {
+        var cb = container.querySelector('input[value="' + (window.CSS && CSS.escape ? CSS.escape(k) : k) + '"]');
+        if (cb && !cb.checked) { cb.checked = true; changed.push(cb.nextElementSibling ? cb.nextElementSibling.textContent : k); }
+      });
+      if (changed.length) save();
+      return changed;
+    }
+    return { get: get, setAll: setAll, turnOn: turnOn };
   }
 
   async function post(url, body) {
@@ -77,5 +115,5 @@
     toast._t = setTimeout(function () { t.hidden = true; }, 3500);
   }
 
-  global.AITool = { el: el, attachUpload: attachUpload, topics: topics, post: post, copy: copy, toast: toast };
+  global.AITool = { el: el, attachUpload: attachUpload, topics: topics, post: post, copy: copy, toast: toast, detect: detect, autoDetect: autoDetect };
 })(window);
