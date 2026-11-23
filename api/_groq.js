@@ -103,13 +103,29 @@ export async function solveWithGroq(req, res, { system, consigna, validate, resu
   if (consigna.length < 10) return res.status(400).json({ error: "Escribí una consigna un poco más completa." });
   if (consigna.length > MAX_CONSIGNA) return res.status(400).json({ error: "La consigna es demasiado larga. Probá pegando un ejercicio por vez." });
 
+  try {
+    const { result, model } = await groqJSON({ apiKey, system, user: `Consigna:\n"""\n${consigna}\n"""`, validate, what });
+    return res.status(200).json({ [resultKey]: result, model });
+  } catch (err) {
+    return res.status(err.status || 502).json({ error: err.message });
+  }
+}
+
+export function checkLimit(req, res) {
+  res.setHeader("X-Author", "Theo Trosman - https://github.com/theotrosman");
+  if (req.method !== "POST") { res.setHeader("Allow", "POST"); res.status(405).json({ error: "Usá POST" }); return false; }
+  if (!process.env.GROQ_API_KEY) { res.status(500).json({ error: "Falta configurar GROQ_API_KEY en Vercel." }); return false; }
+  const ip = String(req.headers["x-forwarded-for"] || "").split(",")[0].trim() || "local";
+  if (rateLimited(ip)) { res.status(429).json({ error: "Demasiados pedidos seguidos. Esperá un minuto y probá de nuevo." }); return false; }
+  return true;
+}
+
+// Una consulta a Groq que devuelve JSON validado (con reintentos y respaldo de modelos).
+// Tira un Error con .status si no se pudo. Sirve para encadenar varias llamadas.
+export async function groqJSON({ apiKey, system, user, validate, what }) {
   const models = [...new Set([process.env.GROQ_MODEL, ...FALLBACK_MODELS].map((m) => (m || "").trim()).filter(Boolean))];
   let modelIndex = 0;
-  const messages = [
-    { role: "system", content: system },
-    { role: "user", content: `Consigna:\n"""\n${consigna}\n"""` }
-  ];
-
+  const messages = [{ role: "system", content: system }, { role: "user", content: user }];
   let lastError = "";
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
     let content;
@@ -117,30 +133,20 @@ export async function solveWithGroq(req, res, { system, consigna, validate, resu
     try {
       content = await askGroq(messages, model, apiKey);
     } catch (err) {
-      if (isModelError(err) && modelIndex < models.length - 1) {
-        console.warn(`Modelo ${model} no disponible, pruebo ${models[modelIndex + 1]}: ${err.message}`);
-        modelIndex++;
-        attempt--;
-        continue;
-      }
-      const status = err.status === 429 ? 429 : 502;
-      const msg = err.status === 429
-        ? "Se alcanzó el límite de uso de Groq. Probá de nuevo en un rato."
-        : `No se pudo consultar a Groq: ${err.message}`;
-      return res.status(status).json({ error: msg });
+      if (isModelError(err) && modelIndex < models.length - 1) { modelIndex++; attempt--; continue; }
+      const e = new Error(err.status === 429 ? "Se alcanzó el límite de uso de Groq. Probá de nuevo en un rato." : `No se pudo consultar a Groq: ${err.message}`);
+      e.status = err.status === 429 ? 429 : 502;
+      throw e;
     }
-
     try {
-      const result = validate(extractJSON(content));
-      return res.status(200).json({ [resultKey]: result, model });
+      return { result: validate(extractJSON(content)), model };
     } catch (err) {
       lastError = err instanceof ValidationError || err instanceof SyntaxError ? err.message : "respuesta inválida";
       messages.push({ role: "assistant", content });
-      messages.push({
-        role: "user",
-        content: `Tu respuesta tiene un problema: ${lastError}. Devolvé de nuevo el JSON completo y corregido, con la misma forma pedida.`
-      });
+      messages.push({ role: "user", content: `Tu respuesta tiene un problema: ${lastError}. Devolvé de nuevo el JSON completo y corregido, con la misma forma pedida.` });
     }
   }
-  return res.status(502).json({ error: `La IA no devolvió ${what} válido (${lastError}). Probá de nuevo o reformulá la consigna.` });
+  const e = new Error(`La IA no devolvió ${what} válido (${lastError}). Probá de nuevo o reformulá la consigna.`);
+  e.status = 502;
+  throw e;
 }

@@ -1,0 +1,130 @@
+<!doctype html>
+<!--
+  ORT Info es fácil · TP de Historia 5 (UML + NS Plus)
+  © 2026 Theo Trosman. Todos los derechos reservados.
+  https://github.com/theotrosman
+-->
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>TP de Historia 5: UML + NS Plus · ORT Info es fácil · por Theo Trosman</title>
+  <meta name="description" content="Pegá la consigna del TP de Historia 5 y obtené los dos entregables listos: el diagrama de clases UML (.uxf para UMLetino) y los diagramas NS (.nsplus para NS Plus), coordinados. Creado por Theo Trosman.">
+  <meta name="author" content="Theo Trosman">
+  <meta name="copyright" content="© 2026 Theo Trosman. Todos los derechos reservados.">
+  <link rel="author" href="https://github.com/theotrosman">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%233f51b5'/%3E%3Crect x='6' y='6' width='9' height='9' rx='2.5' fill='%23ffffff'/%3E%3Crect x='17' y='6' width='9' height='9' rx='2.5' fill='%23a6b8ff'/%3E%3Crect x='6' y='17' width='9' height='9' rx='2.5' fill='%23a6b8ff'/%3E%3Crect x='17' y='17' width='9' height='9' rx='2.5' fill='%23ffffff'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <nav class="crumbs" aria-label="Ubicación">
+        <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span class="brand-name">ORT Info es fácil</span></a>
+        <span class="crumb-sep" aria-hidden="true">/</span>
+        <span class="crumb-current">TP Historia (UML + NS)</span>
+      </nav>
+      <a class="byline" href="https://github.com/theotrosman" target="_blank" rel="noopener"><span>por <strong>Theo Trosman</strong></span></a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hall-hero tool-hero">
+      <h1>TP de Historia: UML + NS Plus, los dos entregables.</h1>
+      <p>Pegá la consigna (o subí el PDF/Word) y te deja al pie los dos archivos listos: el diagrama de clases para <strong>UMLetino</strong> (.uxf) y los diagramas Nassi-Shneiderman para <strong>NS Plus</strong> (.nsplus), armados a partir de las mismas clases para que coincidan.</p>
+    </section>
+
+    <form id="form" class="card" autocomplete="off">
+      <div class="step-title"><span class="step-num">1</span> Pegá la consigna del trabajo</div>
+      <div id="dropzone" class="composer">
+        <textarea id="consigna" rows="9" maxlength="20000" placeholder="Pegá la consigna completa, o arrastrá el PDF/Word a este cuadro…"></textarea>
+        <div class="composer-bar">
+          <label class="btn btn-soft btn-sm">Subir archivo<input id="file" type="file" hidden></label>
+          <button id="clear" class="btn btn-ghost btn-sm" type="button" hidden>Borrar</button>
+          <span class="counter"><span id="count">0</span> / 20.000</span>
+        </div>
+        <div class="drop-overlay" aria-hidden="true">Soltá el archivo acá</div>
+      </div>
+      <p id="file-status" class="file-status" hidden></p>
+      <button id="submit" class="btn btn-primary btn-big" type="submit"><span class="btn-label">Armar los dos entregables</span><kbd class="kbd">Ctrl ↵</kbd></button>
+      <p id="form-error" class="form-error" hidden></p>
+    </form>
+
+    <section id="state-loading" class="card state-loading" hidden aria-live="polite">
+      <div class="loading-head"><div class="spinner" aria-hidden="true"></div><div><p id="loading-text" class="loading-text">Armando el diagrama de clases…</p><p class="muted">Son dos diagramas, puede tardar un minuto o más.</p></div></div>
+    </section>
+    <section id="state-error" class="card state state-error" hidden aria-live="polite">
+      <div class="error-icon" aria-hidden="true">!</div><p class="error-title">Uy, no salió</p><p id="error-text"></p>
+      <button id="retry" class="btn btn-primary" type="button">Probar de nuevo</button>
+    </section>
+
+    <section id="state-result" class="card result-card" hidden aria-live="polite">
+      <div class="result-top">
+        <div><p class="result-kicker">Listo</p><h2 id="r-name" class="result-name"></h2><p id="r-meta" class="muted"></p></div>
+      </div>
+
+      <!-- Los dos entregables, al pie de la consigna, listos -->
+      <div class="deliver2">
+        <div class="deliver-card">
+          <h3>1 · Diagrama de clases (UML)</h3>
+          <p class="muted">Para UMLetino. Abrilo con <strong>File Import</strong>.</p>
+          <button id="dl-uxf" class="btn btn-primary btn-download" type="button">Descargar .uxf</button>
+        </div>
+        <div class="deliver-card">
+          <h3>2 · Diagramas NS (métodos)</h3>
+          <p class="muted">Para NS Plus. Abrilo con el botón de la <strong>carpeta</strong>.</p>
+          <button id="dl-nsplus" class="btn btn-primary btn-download" type="button">Descargar .nsplus</button>
+        </div>
+      </div>
+      <div class="result-actions">
+        <button id="dl-doc" class="btn" type="button">Descargar informe (PDF o Word)</button>
+        <button id="regenerate" class="btn btn-ghost" type="button">Hacerlo de nuevo</button>
+      </div>
+
+      <div id="explanation-box" class="explanation"><p class="explanation-title">Cómo se armó</p><p id="explanation"></p></div>
+
+      <h3 class="section-h">Vista previa · Diagrama de clases UML</h3>
+      <div class="uml-frame" id="uml-preview"></div>
+
+      <h3 class="section-h">Vista previa · Diagramas NS</h3>
+      <div id="ns-preview" class="diagrams"></div>
+
+      <p class="warning">La IA se puede equivocar: revisá que el UML y los NS tengan todo lo que pide la consigna, y seguí algún método paso a paso antes de entregar.</p>
+    </section>
+
+    <p class="credit-inline"><a href="/">← Volver a todas las herramientas</a><br>Esta herramienta fue creada por <a href="https://github.com/theotrosman" target="_blank" rel="noopener">Theo Trosman</a>. © 2026 Theo Trosman. Todos los derechos reservados.</p>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <div class="indigo-bar" role="contentinfo" aria-label="Créditos">
+    <a class="ib-left" href="https://github.com/theotrosman" target="_blank" rel="noopener">Theo Trosman</a>
+    <span class="ib-motto">Para toda la Comunidad de ORT<sup>*</sup></span>
+    <a class="ib-right" href="https://github.com/theotrosman/NSPLUS_SOLVER" target="_blank" rel="noopener">© 2026 Theo Trosman</a>
+  </div>
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <div>
+        <p class="footer-brand">ORT Info es fácil · TP Historia</p>
+        <p>© <span id="year">2026</span> Theo Trosman. Todos los derechos reservados.</p>
+        <p>Diseñado y desarrollado por <a href="https://github.com/theotrosman" target="_blank" rel="noopener">Theo Trosman</a> · <a href="https://github.com/theotrosman/NSPLUS_SOLVER" target="_blank" rel="noopener">Código en GitHub</a></p>
+        <p class="footer-note">Proyecto independiente y no oficial, hecho por un alumno.</p>
+      </div>
+      <div class="daily-quote" id="daily-quote" aria-live="polite"></div>
+    </div>
+  </footer>
+
+  <script src="js/uml-layout.js"></script>
+  <script src="js/nsplus-file.js"></script>
+  <script src="js/preview.js"></script>
+  <script src="js/pdf-text.js"></script>
+  <script src="js/file-text.js"></script>
+  <script src="js/entregable.js"></script>
+  <script src="js/docx.js"></script>
+  <script src="js/historia-app.js"></script>
+  <script src="js/scroll-hint.js"></script>
+  <script src="js/site.js"></script>
+</body>
+</html>

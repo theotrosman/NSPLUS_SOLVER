@@ -766,3 +766,10 @@ a.tool-card:hover .tool-icon { transform: translateY(-2px) rotate(-1.5deg); }
 .dl-btns .btn { flex: 1; justify-content: center; padding: 14px; font-size: 16px; }
 .dl-x { margin-top: 12px; border: 0; background: none; color: var(--muted); font: inherit; cursor: pointer; text-decoration: underline; }
 @media (prefers-reduced-motion: reduce) { .dl-modal-back { animation: none; } }
+/* ---------- TP Historia: dos entregables ---------- */
+.deliver2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 4px 0 14px; }
+.deliver-card { border: 1.5px solid var(--accent); border-radius: 12px; padding: 16px; background: var(--accent-soft); }
+.deliver-card h3 { margin: 0 0 4px; font-size: 17px; }
+.deliver-card .btn { margin-top: 10px; width: 100%; justify-content: center; }
+.section-h { margin: 24px 0 10px; font-size: 16px; }
+@media (max-width: 640px) { .deliver2 { grid-template-columns: 1fr; } }

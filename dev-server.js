@@ -10,6 +10,7 @@
  */
 import http from "node:http";
 import { readFile } from "node:fs/promises";
+import { readFileSync } from "node:fs";
 import { extname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 import handler from "./api/generate.js";
@@ -19,6 +20,8 @@ import extractHandler from "./api/extract.js";
 import sqlHandler from "./api/sql.js";
 import adaptHandler from "./api/adapt.js";
 import detectHandler from "./api/detect.js";
+import historiaHandler from "./api/historia.js";
+import { normalizeProject } from "./api/_normalize.js";
 import { normalizeUml } from "./api/_uml-normalize.js";
 
 const root = fileURLToPath(new URL(".", import.meta.url));
@@ -116,7 +119,9 @@ const DEMO_EXTRACT = {
   memoria: [{ label: "1", kind: "replace", refs: [1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5], frames: 3, algorithms: ["FIFO", "LRU"] }, { label: "2", kind: "translate", pageSize: 2048, address: 9000, pageTable: { 0: 3, 1: 6, 2: 1, 3: 4, 4: 2 } }],
   osi: [{ label: "Pregunta 1", question: "¿En qué capa trabaja el router?", answer: "En la capa 3, Red.", explanation: "El router usa direcciones IP para elegir el camino entre redes." }]
 };
+const CLUB_UML = JSON.parse(readFileSync(join(root, "test", "fixtures", "club-java.json"), "utf8").replace(/^﻿/, ""));
 const EXTRA = {
+  "/api/historia": { handler: historiaHandler, demo: () => ({ model: "demo", uml: normalizeUml(CLUB_UML), project: normalizeProject(DEMO_CLASSES) }) },
   "/api/extract": { handler: extractHandler, demo: (b) => ({ items: DEMO_EXTRACT[b.tool] || [], model: "demo" }) },
   "/api/sql": { handler: sqlHandler, demo: () => ({ model: "demo", result: {
     name: "Demo: escuela", explanation: "Modo demo (sin GROQ_API_KEY). Se usan las tablas Alumnos y Cursos.", schema: "Alumnos(IdAlumno, Nombre, Apellido, IdCurso)\nCursos(IdCurso, Nombre, Anio)",

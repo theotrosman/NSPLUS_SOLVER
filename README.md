@@ -14,6 +14,7 @@ Página con herramientas simples para la materia de Informática. La página pri
 | IP, subredes y VLSM | `/subredes` | `subredes.html` |
 | Modelo OSI y TCP/IP | `/osi` | `osi.html` |
 | Laboratorio de TDA | `/tda` | `tda.html` |
+| TP Historia (UML + NS) | `/historia` | `historia.html` |
 | Consultas SQL | `/sql` | `sql.html` |
 | Simulador de memoria | `/memoria` | `memoria.html` |
 | Adaptador de código | `/adaptador` | `adaptador.html` |
@@ -139,6 +140,9 @@ Elegís la materia (HTML y CSS, SQL, C# o Java), pegás el código o subís el a
 - **Consigna en PDF en todas**: en las calculadoras (simplificador, bases, redes, TDA, memoria, OSI) un lector de consignas encuentra los ejercicios con IA (`api/extract.js`) y la herramienta los resuelve sin IA; "Resolver todos y descargar el PDF" arma un solo entregable.
 - **Entregable descargable en todas** (`js/entregable.js`): PDF prolijo con consigna, resultado y pasos, más el archivo propio de cada una (`.nsplus`, `.uxf`, `.sql`, código, `.csv`).
 - **Frase del día** en el pie y un **pedido de estrella** al repo después de cada uso (`js/site.js`).
+## TP de Historia 5 (UML + NS Plus)
+
+Para los trabajos que piden los dos entregables combinados. Pegás la consigna (o subís PDF/Word) y arma, con una sola consigna: primero el diagrama de clases UML (Java, 5to) y después los diagramas Nassi-Shneiderman que implementan ESE UML (mismos nombres y tipos). Deja al pie los dos archivos listos: `.uxf` (UMLetino) y `.nsplus` (NS Plus), más un informe en PDF o Word.
 ## Aviso
 
 Herramienta independiente y no oficial. No está afiliada a ORT ni a NS Plus; NS Plus es obra de sus autores, los profesores C. Daniel Vázquez y Carlos E. Cimino. La IA puede equivocarse: revisá siempre el diagrama con una prueba de escritorio.
