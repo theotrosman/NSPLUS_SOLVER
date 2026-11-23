@@ -11,6 +11,9 @@ Página con herramientas simples para la materia de Informática. La página pri
 | Simplificador booleano | `/simplificador` | `simplificador.html` |
 | Cambio de base | `/cambio-de-base` | `cambio-de-base.html` |
 | Armador de PC | `/armador-pc` | `armador-pc.html` |
+| IP, subredes y VLSM | `/subredes` | `subredes.html` |
+| Modelo OSI y TCP/IP | `/osi` | `osi.html` |
+| Laboratorio de TDA | `/tda` | `tda.html` |
 
 Para sumar una herramienta nueva: crear su `.html` en la raíz y agregar su tarjeta en `index.html`.
 
@@ -101,6 +104,21 @@ Pasa entre binario, octal, decimal, hexadecimal y cualquier base de 2 a 36, con 
 ## Armador de PC
 
 Para el TP de Componentes: pegás la situación del cliente y la IA propone configuraciones (económica, intermedia y potente) con procesador, motherboard, RAM, placa de video, almacenamiento, fuente, gabinete y refrigeración compatibles, explicando cada elección, qué cambia entre opciones, una recomendación y un glosario.
+## IP, subredes y VLSM (Seminario 5)
+
+Sin IA. Calculadora IP (red, broadcast, primer y último host, hosts, máscara, wildcard, clase y tipo, con el AND bit a bit), subredes iguales (bits prestados) y VLSM: ordena de mayor a menor, elige el bloque (potencia de 2 ≥ hosts + 2), alinea y muestra el "playón" con cada subred.
+
+## Modelo OSI y TCP/IP (Seminario 5)
+
+Las 7 capas de OSI al lado de las 4 de TCP/IP, con qué hace cada una, PDU, protocolos y dispositivos; encapsulamiento paso a paso y práctica de 10 preguntas al azar.
+
+## Laboratorio de TDA (Historia 5)
+
+Pila, Cola y Lista Ordenada con los métodos de las interfaces de la materia (`push`, `peek`, `pop`, `add`, `get`, `remove`, `removeAt`, `exists`, `search`, `size`, `isEmpty`, `isFull`), animadas y con la llamada en Java y lo que devuelve.
+
+UML Solver además genera el **código de las clases en Java o C#** (atributos, relaciones como listas, constructores con `super`/`base`, herencia, interfaces, abstractas y enums).
+
+Todas las páginas muestran un aviso "Deslizá para ver más ↓" cuando hay contenido abajo, y "Hay más abajo" cuando aparece un resultado fuera de la pantalla (`js/scroll-hint.js`).
 ## Aviso
 
 Herramienta independiente y no oficial. No está afiliada a ORT ni a NS Plus; NS Plus es obra de sus autores, los profesores C. Daniel Vázquez y Carlos E. Cimino. La IA puede equivocarse: revisá siempre el diagrama con una prueba de escritorio.

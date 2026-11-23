@@ -1,0 +1,82 @@
+<!doctype html>
+<!--
+  ORT Info es fácil · Modelo OSI y TCP/IP
+  © 2026 Theo Trosman. Todos los derechos reservados.
+  https://github.com/theotrosman
+-->
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Modelo OSI y TCP/IP · ORT Info es fácil · por Theo Trosman</title>
+  <meta name="description" content="Las 7 capas del modelo OSI y las 4 de TCP/IP: qué hace cada una, PDU, protocolos y dispositivos. Con práctica de preguntas. Creado por Theo Trosman.">
+  <meta name="author" content="Theo Trosman">
+  <meta name="copyright" content="© 2026 Theo Trosman. Todos los derechos reservados.">
+  <link rel="author" href="https://github.com/theotrosman">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231d2433'/%3E%3Cpath d='M6 9h20M6 9l10 9 10-9M16 18v6M6 24h20' stroke='%23f2efe8' stroke-width='2' fill='none'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <nav class="crumbs" aria-label="Ubicación">
+        <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span class="brand-name">ORT Info es fácil</span></a>
+        <span class="crumb-sep" aria-hidden="true">/</span>
+        <span class="crumb-current">OSI y TCP/IP</span>
+      </nav>
+      <a class="byline" href="https://github.com/theotrosman" target="_blank" rel="noopener"><span>por <strong>Theo Trosman</strong></span></a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hall-hero tool-hero">
+      <h1>Modelo OSI y TCP/IP, capa por capa.</h1>
+      <p>Qué hace cada capa, cómo se llaman los datos (PDU), qué protocolos y dispositivos trabajan ahí, y cómo se corresponden OSI y TCP/IP. Abajo, una práctica para estudiar.</p>
+    </section>
+
+    <section class="card">
+      <div class="tabs tabs-top" role="tablist">
+        <button class="tab is-active" role="tab" data-tab="layers" aria-selected="true">Las capas</button>
+        <button class="tab" role="tab" data-tab="encap" aria-selected="false">Encapsulamiento</button>
+        <button class="tab" role="tab" data-tab="quiz" aria-selected="false">Practicar</button>
+      </div>
+      <div class="tab-panel" data-panel="layers">
+        <p class="muted">Tocá una capa para ver el detalle. Para acordarte de OSI de abajo hacia arriba: <strong>F</strong>ísica, <strong>E</strong>nlace, <strong>R</strong>ed, <strong>T</strong>ransporte, <strong>S</strong>esión, <strong>P</strong>resentación, <strong>A</strong>plicación.</p>
+        <div id="stack" class="osi-stack"></div>
+        <div id="detail" class="osi-detail"></div>
+      </div>
+      <div class="tab-panel" data-panel="encap" hidden>
+        <p>Cuando mandás algo (por ejemplo, abrir una página web), los datos bajan por las capas y cada una les agrega su propia "etiqueta" (encabezado). Del otro lado suben y cada capa saca la suya.</p>
+        <div id="encap" class="encap"></div>
+      </div>
+      <div class="tab-panel" data-panel="quiz" hidden>
+        <div id="quiz"></div>
+      </div>
+    </section>
+
+    <p class="credit-inline"><a href="/">← Volver a todas las herramientas</a><br>OSI y TCP/IP fue creado por <a href="https://github.com/theotrosman" target="_blank" rel="noopener">Theo Trosman</a>. © 2026 Theo Trosman. Todos los derechos reservados.</p>
+  </main>
+
+  <div class="indigo-bar" role="contentinfo" aria-label="Créditos">
+    <a class="ib-left" href="https://github.com/theotrosman" target="_blank" rel="noopener">Theo Trosman</a>
+    <span class="ib-motto">Para toda la Comunidad de ORT<sup>*</sup></span>
+    <a class="ib-right" href="https://github.com/theotrosman/NSPLUS_SOLVER" target="_blank" rel="noopener">© 2026 Theo Trosman</a>
+  </div>
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <div>
+        <p class="footer-brand">ORT Info es fácil · OSI y TCP/IP</p>
+        <p>© <span id="year">2026</span> Theo Trosman. Todos los derechos reservados.</p>
+        <p>Diseñado y desarrollado por <a href="https://github.com/theotrosman" target="_blank" rel="noopener">Theo Trosman</a> · <a href="https://github.com/theotrosman/NSPLUS_SOLVER" target="_blank" rel="noopener">Código en GitHub</a></p>
+      </div>
+      <p class="disclaimer"><strong>*</strong> Sí, se parece muchísimo a NS Plus. Es a propósito. Sitio independiente y no oficial, hecho por un alumno. No está afiliado a ORT Argentina.</p>
+    </div>
+  </footer>
+
+  <script src="js/osi-app.js"></script>
+  <script src="js/scroll-hint.js"></script>
+</body>
+</html>

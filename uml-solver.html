@@ -171,6 +171,19 @@
         <div id="uml-summary" class="uml-summary"></div>
       </details>
 
+      <details class="uml-detail" id="code-box">
+        <summary>Ver el código de las clases (Java o C#)</summary>
+        <div class="code-head">
+          <div class="seg" role="radiogroup" aria-label="Lenguaje">
+            <label><input type="radio" name="code-lang" value="java" checked><span>Java</span></label>
+            <label><input type="radio" name="code-lang" value="csharp"><span>C#</span></label>
+          </div>
+          <button id="copy-code" class="btn btn-sm" type="button">Copiar todo el código</button>
+        </div>
+        <p class="muted">Esqueleto armado a partir del diagrama: atributos, relaciones, constructores, herencia y métodos para completar.</p>
+        <div id="code-files"></div>
+      </details>
+
       <p class="warning">La IA se puede equivocar: revisá que estén todas las clases y relaciones que pide la consigna antes de entregarlo.</p>
       <div class="result-actions">
         <button id="regenerate" class="btn" type="button">
@@ -203,7 +216,9 @@
   </footer>
 
   <script src="js/uml-layout.js"></script>
+  <script src="js/uml-code.js"></script>
   <script src="js/pdf-text.js"></script>
   <script src="js/uml-app.js"></script>
+  <script src="js/scroll-hint.js"></script>
 </body>
 </html>

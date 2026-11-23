@@ -1,0 +1,107 @@
+<!doctype html>
+<!--
+  ORT Info es fácil · IP, subredes y VLSM
+  © 2026 Theo Trosman. Todos los derechos reservados.
+  https://github.com/theotrosman
+-->
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>IP, subredes y VLSM paso a paso · ORT Info es fácil · por Theo Trosman</title>
+  <meta name="description" content="Calculadora de IP, subredes iguales y VLSM con los pasos: red, broadcast, primer y último host, máscara y bloques. Creado por Theo Trosman.">
+  <meta name="author" content="Theo Trosman">
+  <meta name="copyright" content="© 2026 Theo Trosman. Todos los derechos reservados.">
+  <link rel="author" href="https://github.com/theotrosman">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231d2433'/%3E%3Cpath d='M6 9h20M6 9l10 9 10-9M16 18v6M6 24h20' stroke='%23f2efe8' stroke-width='2' fill='none'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <nav class="crumbs" aria-label="Ubicación">
+        <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span class="brand-name">ORT Info es fácil</span></a>
+        <span class="crumb-sep" aria-hidden="true">/</span>
+        <span class="crumb-current">IP y VLSM</span>
+      </nav>
+      <a class="byline" href="https://github.com/theotrosman" target="_blank" rel="noopener"><span>por <strong>Theo Trosman</strong></span></a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hall-hero tool-hero">
+      <h1>IP, subredes y VLSM, paso a paso.</h1>
+      <p>Calculá red, broadcast, hosts y máscara de cualquier IP, dividí una red en partes iguales o armá el plan VLSM ordenando de mayor a menor. Sin IA: todo se calcula.</p>
+    </section>
+
+    <section class="card">
+      <div class="tabs tabs-top" role="tablist">
+        <button class="tab is-active" role="tab" data-tab="calc" aria-selected="true">Calculadora IP</button>
+        <button class="tab" role="tab" data-tab="flsm" aria-selected="false">Subredes iguales</button>
+        <button class="tab" role="tab" data-tab="vlsm" aria-selected="false">VLSM</button>
+      </div>
+
+      <!-- Calculadora -->
+      <div class="tab-panel" data-panel="calc">
+        <div class="base-form ip-form">
+          <label>Dirección IP<input id="c-ip" class="field mono" type="text" inputmode="decimal" placeholder="192.168.1.130" value="192.168.1.130"></label>
+          <label>Máscara o prefijo<input id="c-mask" class="field mono" type="text" placeholder="/26 o 255.255.255.192" value="/26"></label>
+        </div>
+        <p class="muted">También podés escribir todo junto en la IP: 192.168.1.130/26</p>
+        <p id="c-error" class="form-error" hidden></p>
+        <div id="c-out"></div>
+      </div>
+
+      <!-- FLSM -->
+      <div class="tab-panel" data-panel="flsm" hidden>
+        <div class="base-form ip-form">
+          <label>Red a dividir<input id="f-net" class="field mono" type="text" placeholder="192.168.10.0/24" value="192.168.10.0/24"></label>
+          <label>¿Cuántas subredes?<input id="f-count" class="field mono" type="number" min="2" max="65536" value="4"></label>
+        </div>
+        <p id="f-error" class="form-error" hidden></p>
+        <div id="f-out"></div>
+      </div>
+
+      <!-- VLSM -->
+      <div class="tab-panel" data-panel="vlsm" hidden>
+        <div class="base-form ip-form" style="grid-template-columns:1fr">
+          <label>Red disponible<input id="v-net" class="field mono" type="text" placeholder="192.168.1.0/24" value="192.168.1.0/24"></label>
+        </div>
+        <p class="field-label" style="margin:16px 0 8px;font-weight:700">Subredes que necesitás (el orden no importa, se ordenan solas)</p>
+        <div id="v-rows" class="vlsm-rows"></div>
+        <div class="result-actions" style="margin-top:8px">
+          <button id="v-add" class="btn btn-sm" type="button">+ Agregar subred</button>
+          <button id="v-example" class="btn btn-ghost btn-sm" type="button">Cargar un ejemplo</button>
+        </div>
+        <p id="v-error" class="form-error" hidden></p>
+        <div id="v-out"></div>
+      </div>
+    </section>
+
+    <p class="credit-inline"><a href="/">← Volver a todas las herramientas</a><br>La calculadora de redes fue creada por <a href="https://github.com/theotrosman" target="_blank" rel="noopener">Theo Trosman</a>. © 2026 Theo Trosman. Todos los derechos reservados.</p>
+  </main>
+
+  <div class="indigo-bar" role="contentinfo" aria-label="Créditos">
+    <a class="ib-left" href="https://github.com/theotrosman" target="_blank" rel="noopener">Theo Trosman</a>
+    <span class="ib-motto">Para toda la Comunidad de ORT<sup>*</sup></span>
+    <a class="ib-right" href="https://github.com/theotrosman/NSPLUS_SOLVER" target="_blank" rel="noopener">© 2026 Theo Trosman</a>
+  </div>
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <div>
+        <p class="footer-brand">ORT Info es fácil · IP y VLSM</p>
+        <p>© <span id="year">2026</span> Theo Trosman. Todos los derechos reservados.</p>
+        <p>Diseñado y desarrollado por <a href="https://github.com/theotrosman" target="_blank" rel="noopener">Theo Trosman</a> · <a href="https://github.com/theotrosman/NSPLUS_SOLVER" target="_blank" rel="noopener">Código en GitHub</a></p>
+      </div>
+      <p class="disclaimer"><strong>*</strong> Sí, se parece muchísimo a NS Plus. Es a propósito. Sitio independiente y no oficial, hecho por un alumno. No está afiliado a ORT Argentina.</p>
+    </div>
+  </footer>
+
+  <script src="js/ip-engine.js"></script>
+  <script src="js/subredes-app.js"></script>
+  <script src="js/scroll-hint.js"></script>
+</body>
+</html>

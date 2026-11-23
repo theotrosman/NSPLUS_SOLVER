@@ -1,0 +1,92 @@
+<!doctype html>
+<!--
+  ORT Info es fácil · Laboratorio de TDA
+  © 2026 Theo Trosman. Todos los derechos reservados.
+  https://github.com/theotrosman
+-->
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Laboratorio de TDA: Pila, Cola y Lista Ordenada · ORT Info es fácil · por Theo Trosman</title>
+  <meta name="description" content="Probá Pila, Cola y Lista Ordenada con los métodos de la materia (push, pop, peek, add, get, remove…) y mirá qué pasa en cada operación, con el código Java. Creado por Theo Trosman.">
+  <meta name="author" content="Theo Trosman">
+  <meta name="copyright" content="© 2026 Theo Trosman. Todos los derechos reservados.">
+  <link rel="author" href="https://github.com/theotrosman">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231d2433'/%3E%3Cpath d='M6 9h20M6 9l10 9 10-9M16 18v6M6 24h20' stroke='%23f2efe8' stroke-width='2' fill='none'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <nav class="crumbs" aria-label="Ubicación">
+        <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span class="brand-name">ORT Info es fácil</span></a>
+        <span class="crumb-sep" aria-hidden="true">/</span>
+        <span class="crumb-current">Laboratorio de TDA</span>
+      </nav>
+      <a class="byline" href="https://github.com/theotrosman" target="_blank" rel="noopener"><span>por <strong>Theo Trosman</strong></span></a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hall-hero tool-hero">
+      <h1>Laboratorio de TDA.</h1>
+      <p>Probá Pila, Cola y Lista Ordenada con los mismos métodos de las interfaces de la materia y mirá qué pasa adentro en cada operación, con la llamada en Java y lo que devuelve.</p>
+    </section>
+
+    <section class="card">
+      <div class="tabs tabs-top" role="tablist">
+        <button class="tab is-active" role="tab" data-tab="pila" aria-selected="true">Pila&lt;T&gt; · LIFO</button>
+        <button class="tab" role="tab" data-tab="cola" aria-selected="false">Cola&lt;T&gt; · FIFO</button>
+        <button class="tab" role="tab" data-tab="lista" aria-selected="false">ListaOrdenada&lt;K,T&gt;</button>
+      </div>
+      <p id="tda-desc" class="tda-desc"></p>
+
+      <div class="tda-controls">
+        <label>Valor<input id="value" class="field mono" type="text" placeholder="Ej: 7" maxlength="12"></label>
+        <label>Capacidad<input id="cap" class="field mono" type="number" min="1" max="12" value="6"></label>
+        <button id="random" class="btn btn-sm" type="button">Valor al azar</button>
+        <button id="reset" class="btn btn-ghost btn-sm" type="button">Vaciar</button>
+      </div>
+      <div id="ops" class="tda-ops"></div>
+
+      <div class="tda-stage">
+        <div id="viz" class="tda-viz"></div>
+        <div class="tda-side">
+          <p class="explanation-title">Lo que va pasando</p>
+          <ol id="log" class="tda-log"></ol>
+        </div>
+      </div>
+
+      <details class="uml-detail">
+        <summary>Ver la interfaz en Java</summary>
+        <pre id="iface" class="code-block"></pre>
+      </details>
+    </section>
+
+    <p class="credit-inline"><a href="/">← Volver a todas las herramientas</a><br>El Laboratorio de TDA fue creado por <a href="https://github.com/theotrosman" target="_blank" rel="noopener">Theo Trosman</a>. © 2026 Theo Trosman. Todos los derechos reservados.</p>
+  </main>
+
+  <div class="indigo-bar" role="contentinfo" aria-label="Créditos">
+    <a class="ib-left" href="https://github.com/theotrosman" target="_blank" rel="noopener">Theo Trosman</a>
+    <span class="ib-motto">Para toda la Comunidad de ORT<sup>*</sup></span>
+    <a class="ib-right" href="https://github.com/theotrosman/NSPLUS_SOLVER" target="_blank" rel="noopener">© 2026 Theo Trosman</a>
+  </div>
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <div>
+        <p class="footer-brand">ORT Info es fácil · Laboratorio de TDA</p>
+        <p>© <span id="year">2026</span> Theo Trosman. Todos los derechos reservados.</p>
+        <p>Diseñado y desarrollado por <a href="https://github.com/theotrosman" target="_blank" rel="noopener">Theo Trosman</a> · <a href="https://github.com/theotrosman/NSPLUS_SOLVER" target="_blank" rel="noopener">Código en GitHub</a></p>
+      </div>
+      <p class="disclaimer"><strong>*</strong> Sí, se parece muchísimo a NS Plus. Es a propósito. Sitio independiente y no oficial, hecho por un alumno. No está afiliado a ORT Argentina.</p>
+    </div>
+  </footer>
+
+  <script src="js/tda-app.js"></script>
+  <script src="js/scroll-hint.js"></script>
+</body>
+</html>

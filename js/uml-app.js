@@ -224,9 +224,32 @@
     $("explanation-box").hidden = !u.explanation;
     $("uml-preview").innerHTML = UMLLayout.buildSvg(u);
     renderSummary(u);
+    var codeLang = lang() === "java" ? "java" : "csharp";
+    var radio = document.querySelector('input[name="code-lang"][value="' + codeLang + '"]');
+    if (radio) radio.checked = true;
+    renderCode();
     if (scroll) show("result");
     else Object.keys(views).forEach(function (k) { views[k].hidden = k !== "result"; });
   }
+
+  /* --- Código Java / C# --- */
+  var codeFiles = [];
+  function renderCode() {
+    if (!current || !window.UMLCode) return;
+    var sel = document.querySelector('input[name="code-lang"]:checked');
+    codeFiles = UMLCode.generate(current.uml, sel ? sel.value : "java");
+    var box = $("code-files");
+    box.innerHTML = "";
+    codeFiles.forEach(function (f) {
+      box.appendChild(el("p", "code-file", f.file));
+      box.appendChild(el("pre", "code-block", f.code));
+    });
+  }
+  document.querySelectorAll('input[name="code-lang"]').forEach(function (r) { r.addEventListener("change", renderCode); });
+  $("copy-code").addEventListener("click", function () {
+    var text = codeFiles.map(function (f) { return f.code; }).join("\n\n");
+    navigator.clipboard.writeText(text).then(function () { toast("Código copiado."); }, function () { toast("No se pudo copiar."); });
+  });
 
   function fileName(name) {
     return (name || "diagrama").replace(/[\\/:*?"<>|]+/g, "").replace(/\s+/g, " ").trim().slice(0, 60) || "diagrama";
