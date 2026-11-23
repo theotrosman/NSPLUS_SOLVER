@@ -548,3 +548,28 @@ table.steps-table td.hl { color: var(--accent); font-weight: 700; }
 .field.mono { font-family: var(--mono); font-size: 20px; letter-spacing: .02em; }
 .field:focus { outline: 2px solid var(--accent); outline-offset: -1px; border-color: transparent; }
 .base-form input[type="number"] { width: 100%; }
+
+/* ---------- Hall compacto: todas las herramientas a la vista ---------- */
+.hall .wrap { width: min(1180px, 100% - 32px); }
+.hall .hall-hero { padding: 28px 0 6px; max-width: none; display: flex; align-items: baseline; gap: 8px 22px; flex-wrap: wrap; }
+.hall .hall-hero h1 { font-size: clamp(28px, 4vw, 38px); margin: 0; }
+.hall .hall-hero p { font-size: 16px; }
+.hall .subjects { display: grid; grid-template-columns: 2fr 3fr; gap: 0 22px; align-items: start; }
+.hall .subject { margin: 18px 0 10px; }
+.hall .subject h2 { font-size: 16px; }
+.hall .subject span { font-size: 13px; }
+.hall .tools { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.hall .tool-card { flex-direction: row; align-items: flex-start; gap: 14px; padding: 16px; }
+.hall .tool-icon { width: 48px; height: 42px; flex: none; grid-template-rows: 7px 10px 8px 1fr; }
+.hall .tool-icon.tool-icon-text, .hall .tool-icon.tool-icon-uml { grid-template-rows: none; }
+.hall .tool-icon-text { font-size: 12px; }
+.hall .tool-body h2 { font-size: 17px; margin-bottom: 4px; }
+.hall .tool-body p { font-size: 13.5px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.hall .tool-tags, .hall .tool-go { display: none; }
+.hall a.tool-card::after { content: "→"; margin-left: auto; align-self: center; color: var(--accent); font-weight: 700; transition: transform .18s; }
+.hall a.tool-card:hover::after { transform: translateX(4px); }
+.hall .credit-inline { margin-top: 22px; }
+@media (max-width: 900px) { .hall .subjects { grid-template-columns: 1fr; } }.hall .subjects { grid-template-columns: 1fr; }
+.hall .tools { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
+.hall .tool-body p { -webkit-line-clamp: 2; }
+@media (max-width: 520px) { .topbar .brand-name { font-size: 13px; white-space: nowrap; padding: 2px 7px; } .topbar .byline span { display: none; } }
