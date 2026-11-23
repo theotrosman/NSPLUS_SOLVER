@@ -1,13 +1,7 @@
 {
   "cleanUrls": true,
   "functions": {
-    "api/generate.js": {
-      "maxDuration": 120
-    },
-    "api/uml.js": {
-      "maxDuration": 120
-    },
-    "api/pc.js": {
+    "api/*.js": {
       "maxDuration": 120
     }
   },

@@ -178,6 +178,100 @@
     out.appendChild(m);
   }
 
+  /* ---------- Entregables ---------- */
+  function activeTab() { var t = document.querySelector(".tab.is-active"); return t ? t.getAttribute("data-tab") : "calc"; }
+  function vlsmReqs() {
+    return Array.prototype.map.call($("v-rows").children, function (row) { var i = row.querySelectorAll("input"); return { name: i[0].value, hosts: i[1].value }; })
+      .filter(function (r) { return String(r.hosts).trim() !== ""; });
+  }
+  function calcSection(ipText, maskText, label) {
+    var p = E.parseCIDR(ipText, ipText.indexOf("/") >= 0 ? null : maskText), r = E.info(p.ip, p.prefix);
+    return [
+      { title: (label ? label + " · " : "") + "Datos de " + r.ip + "/" + r.prefix, table: { head: ["Dato", "Valor"], rows: [
+        ["Dirección de red", r.network + "/" + r.prefix], ["Broadcast", r.broadcast], ["Primer host", r.first], ["Último host", r.last],
+        ["Hosts utilizables", r.hosts], ["Máscara", r.mask], ["Wildcard", r.wildcard], ["Clase", r.cls.cls], ["Tipo", r.type]] } },
+      { title: "Cálculo en binario", pre: "IP        " + r.bin.ip + "   " + r.ip + "\nMáscara   " + r.bin.mask + "   " + r.mask + "\nRed       " + r.bin.network + "   " + r.network + "  (IP AND máscara)\nBroadcast " + r.bin.broadcast + "   " + r.broadcast + "  (bits de host en 1)\nHosts = 2^" + (32 - r.prefix) + " − 2 = " + r.hosts }
+    ];
+  }
+  function flsmSection(net, count, label) {
+    var r = E.flsm(net, net.indexOf("/") >= 0 ? null : "/24", count);
+    return [
+      { title: (label ? label + " · " : "") + "Dividir " + r.base + " en " + count + " subredes", list: [
+        "Bits prestados: " + r.bits + " (2^" + r.bits + " = " + r.created + " ≥ " + count + ").",
+        "Nuevo prefijo: /" + r.newPrefix + " → máscara " + r.mask + ".",
+        "Cada subred: " + r.size + " direcciones, " + r.hosts + " hosts utilizables."] },
+      { table: { head: ["#", "Red", "Primer host", "Último host", "Broadcast"], rows: r.rows.map(function (x) { return [x.index, x.network + "/" + x.prefix, x.first, x.last, x.broadcast]; }) } }
+    ];
+  }
+  function vlsmSection(net, reqs, label) {
+    var r = E.vlsm(net, net.indexOf("/") >= 0 ? null : "/24", reqs);
+    return [
+      { title: (label ? label + " · " : "") + "Plan VLSM de " + r.base, table: { head: ["Subred", "Hosts pedidos", "Bloque", "Prefijo", "Máscara", "Red", "Primer host", "Último host", "Broadcast"],
+        rows: r.rows.map(function (x) { return [x.name, x.hostsAsked, x.block, "/" + x.prefix, x.mask, x.network, x.first, x.last, x.broadcast]; }) } },
+      { title: "Paso a paso", list: ["Se ordenan de mayor a menor: " + r.rows.map(function (x) { return x.name + " (" + x.hostsAsked + ")"; }).join(", ") + "."].concat(
+        r.rows.map(function (x) { return x.name + ": " + x.hostsAsked + " + 2 = " + x.need + " → bloque de " + x.block + " → /" + x.prefix + " (" + x.mask + "), de " + x.network + " a " + x.broadcast + "."; }),
+        [r.nextFree ? "Queda libre desde " + r.nextFree + " (" + r.free + " direcciones)." : "Se usó toda la red."]) }
+    ];
+  }
+  function itemSections(it) {
+    try {
+      if (it.kind === "calc") return calcSection(it.ip + (it.mask && String(it.ip).indexOf("/") < 0 ? "" : ""), it.mask || "/24", it.label);
+      if (it.kind === "flsm") return flsmSection(it.network, it.count, it.label);
+      if (it.kind === "vlsm") return vlsmSection(it.network, it.subnets || [], it.label);
+    } catch (e) { return [{ title: it.label, text: "No se pudo resolver: " + e.message }]; }
+    return [];
+  }
+
+  $("pdf").addEventListener("click", function () {
+    var tab = activeTab(), sections;
+    try {
+      if (tab === "calc") sections = calcSection($("c-ip").value.trim(), $("c-mask").value);
+      else if (tab === "flsm") sections = flsmSection($("f-net").value.trim(), $("f-count").value);
+      else sections = vlsmSection($("v-net").value.trim(), vlsmReqs());
+    } catch (e) { alert(e.message); return; }
+    ORTDoc.pdf({ tool: "IP, subredes y VLSM", title: tab === "calc" ? "Cálculo de dirección IP" : tab === "flsm" ? "Subredes iguales" : "Plan VLSM", filename: "redes", sections: sections });
+  });
+  $("csv").addEventListener("click", function () {
+    var tab = activeTab(), rows;
+    try {
+      if (tab === "vlsm") {
+        var v = E.vlsm($("v-net").value.trim(), $("v-net").value.indexOf("/") >= 0 ? null : "/24", vlsmReqs());
+        rows = [["Subred", "Hosts pedidos", "Bloque", "Prefijo", "Mascara", "Red", "Primer host", "Ultimo host", "Broadcast"]].concat(v.rows.map(function (x) { return [x.name, x.hostsAsked, x.block, "/" + x.prefix, x.mask, x.network, x.first, x.last, x.broadcast]; }));
+      } else if (tab === "flsm") {
+        var f = E.flsm($("f-net").value.trim(), $("f-net").value.indexOf("/") >= 0 ? null : "/24", $("f-count").value);
+        rows = [["#", "Red", "Primer host", "Ultimo host", "Broadcast"]].concat(f.rows.map(function (x) { return [x.index, x.network + "/" + x.prefix, x.first, x.last, x.broadcast]; }));
+      } else {
+        var c = calcSection($("c-ip").value.trim(), $("c-mask").value)[0].table;
+        rows = [c.head].concat(c.rows);
+      }
+    } catch (e) { alert(e.message); return; }
+    var csv = "﻿" + rows.map(function (r) { return r.map(function (x) { return "\"" + String(x).replace(/"/g, "\"\"") + "\""; }).join(";"); }).join("\r\n");
+    ORTDoc.file("redes-" + tab + ".csv", csv, "text/csv");
+  });
+
+  window.ORTConsigna = window.ORTConsigna || {};
+  window.ORTConsigna.onItem = function (it) {
+    if (it.kind === "calc") {
+      document.querySelector('.tab[data-tab="calc"]').click();
+      $("c-ip").value = it.ip; $("c-mask").value = it.mask || "/24"; calc();
+    } else if (it.kind === "flsm") {
+      document.querySelector('.tab[data-tab="flsm"]').click();
+      $("f-net").value = it.network; $("f-count").value = it.count; doFlsm();
+    } else if (it.kind === "vlsm") {
+      document.querySelector('.tab[data-tab="vlsm"]').click();
+      $("v-net").value = it.network; $("v-rows").innerHTML = "";
+      (it.subnets || []).forEach(function (s) { addRow(s.name, s.hosts); });
+      doVlsm();
+    }
+    document.querySelector(".tabs").scrollIntoView({ behavior: "smooth", block: "start" });
+    if (window.ORT) window.ORT.done();
+  };
+  window.ORTConsigna.all = function (items, consignaText) {
+    var sections = [{ title: "Consigna", pre: consignaText.slice(0, 4000) }];
+    items.forEach(function (it) { sections = sections.concat(itemSections(it)); });
+    ORTDoc.pdf({ tool: "IP, subredes y VLSM", title: "Ejercicios de redes", subtitle: items.length + " ejercicios resueltos.", filename: "redes", sections: sections });
+  };
+
   // Arranque
   calc();
   doFlsm();

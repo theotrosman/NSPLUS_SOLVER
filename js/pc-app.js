@@ -70,6 +70,7 @@
       current = { pc: data.pc, consigna: text };
       try { localStorage.setItem(KEY, JSON.stringify(current)); } catch (e) { /* nada */ }
       render(true);
+      if (window.ORT) window.ORT.done();
     } catch (err) {
       $("error-text").textContent = err.message === "Failed to fetch" ? "No hay conexión. Revisá internet y probá de nuevo." : err.message;
       show("error");
@@ -132,6 +133,35 @@
     if (!current) return;
     navigator.clipboard.writeText(plain()).then(function () { toast("Copiado. Pegalo en tu documento del TP."); }, function () { toast("No se pudo copiar."); });
   });
+  /* --- Entregable en PDF --- */
+  (function () {
+    var copy = $("copy"), group = el("div", "download-group");
+    copy.parentNode.insertBefore(group, copy);
+    var b = el("button", "btn btn-primary btn-download", "Descargar entregable (PDF)");
+    b.type = "button";
+    group.appendChild(b);
+    copy.className = "btn btn-sm";
+    group.appendChild(copy);
+    b.addEventListener("click", function () {
+      if (!current) return;
+      var p = current.pc;
+      var sections = [
+        { title: "Situación del cliente", pre: current.consigna.slice(0, 4000) },
+        { title: "Qué necesita", text: p.summary },
+        p.needs.length ? { list: p.needs } : null
+      ];
+      p.options.forEach(function (o) {
+        sections.push({ title: o.name + (o.level ? " · " + o.level : ""), text: o.goal || "" });
+        sections.push({ table: { head: ["Pieza", "Elección", "Por qué"], rows: o.components.map(function (c) { return [c.part, c.choice, c.why]; }) } });
+        if (o.pros.length || o.cons.length) sections.push({ list: o.pros.map(function (x) { return "Ventaja: " + x; }).concat(o.cons.map(function (x) { return "Desventaja: " + x; })) });
+      });
+      sections.push({ title: "¿Qué cambia entre las opciones?", text: p.comparison });
+      sections.push({ title: "Recomendación", text: p.recommendation });
+      if (p.glossary.length) sections.push({ title: "Glosario", table: { head: ["Término", "Qué significa"], rows: p.glossary.map(function (g) { return [g.term, g.meaning]; }) } });
+      ORTDoc.pdf({ tool: "Armador de PC", title: "Propuestas para " + p.client, subtitle: "Trabajo práctico de Componentes.", filename: "propuestas-pc", sections: sections });
+    });
+  })();
+
   $("form").addEventListener("submit", function (e) { e.preventDefault(); generate(); });
   $("retry").addEventListener("click", generate);
   $("regenerate").addEventListener("click", generate);

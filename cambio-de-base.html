@@ -37,6 +37,8 @@
       <p>Escribí un número y lo ves en binario, octal, decimal y hexadecimal. Tocá cualquier resultado para ver cómo se calcula: divisiones sucesivas, polinomio o agrupación de bits.</p>
     </section>
 
+    <div data-consigna="base"></div>
+
     <section class="card">
       <div class="step-title"><span class="step-num">1</span> Escribí el número</div>
       <div class="base-form">
@@ -64,6 +66,7 @@
       </div>
 
       <div id="method" class="method" hidden></div>
+      <div class="result-actions"><button id="pdf" class="btn btn-primary" type="button">Descargar entregable (PDF)</button></div>
     </section>
 
     <section class="card">
@@ -107,13 +110,18 @@
         <p class="footer-brand">ORT Info es fácil · Cambio de base</p>
         <p>© <span id="year">2026</span> Theo Trosman. Todos los derechos reservados.</p>
         <p>Diseñado y desarrollado por <a href="https://github.com/theotrosman" target="_blank" rel="noopener">Theo Trosman</a> · <a href="https://github.com/theotrosman/NSPLUS_SOLVER" target="_blank" rel="noopener">Código en GitHub</a></p>
+        <p class="footer-note">Proyecto independiente y no oficial, hecho por un alumno.</p>
       </div>
-      <p class="disclaimer"><strong>*</strong> Sí, se parece muchísimo a NS Plus. Es a propósito. Sitio independiente y no oficial, hecho por un alumno. No está afiliado a ORT Argentina.</p>
+      <div class="daily-quote" id="daily-quote" aria-live="polite"></div>
     </div>
   </footer>
 
   <script src="js/base-engine.js"></script>
   <script src="js/base-app.js"></script>
   <script src="js/scroll-hint.js"></script>
+  <script src="js/pdf-text.js"></script>
+  <script src="js/entregable.js"></script>
+  <script src="js/consigna-pdf.js"></script>
+  <script src="js/site.js"></script>
 </body>
 </html>

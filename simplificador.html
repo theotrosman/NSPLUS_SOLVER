@@ -37,6 +37,8 @@
       <p>Escribí la expresión y te la simplifica con el nombre de cada ley en cada renglón, como en la guía de SSI: <em>De Morgan) …</em>, <em>Absorción) …</em>, hasta <strong>Fs</strong>. Sin IA: todo se calcula y se verifica con la tabla de verdad.</p>
     </section>
 
+    <div data-consigna="bool"></div>
+
     <form id="form" class="card" autocomplete="off">
       <div class="step-title"><span class="step-num">1</span> Escribí la expresión</div>
       <div class="expr-box">
@@ -72,7 +74,10 @@
           <h2 class="result-name">Fs = <span id="fs"></span></h2>
           <p id="badge" class="muted"></p>
         </div>
-        <button id="copy" class="btn btn-primary btn-download" type="button">Copiar los pasos</button>
+        <div class="download-group">
+          <button id="pdf" class="btn btn-primary btn-download" type="button">Descargar entregable (PDF)</button>
+          <button id="copy" class="btn btn-sm" type="button">Copiar los pasos</button>
+        </div>
       </div>
 
       <div class="tabs" role="tablist">
@@ -121,13 +126,18 @@
         <p class="footer-brand">ORT Info es fácil · Simplificador</p>
         <p>© <span id="year">2026</span> Theo Trosman. Todos los derechos reservados.</p>
         <p>Diseñado y desarrollado por <a href="https://github.com/theotrosman" target="_blank" rel="noopener">Theo Trosman</a> · <a href="https://github.com/theotrosman/NSPLUS_SOLVER" target="_blank" rel="noopener">Código en GitHub</a></p>
+        <p class="footer-note">Proyecto independiente y no oficial, hecho por un alumno.</p>
       </div>
-      <p class="disclaimer"><strong>*</strong> Sí, se parece muchísimo a NS Plus. Es a propósito. Sitio independiente y no oficial, hecho por un alumno. No está afiliado a ORT Argentina.</p>
+      <div class="daily-quote" id="daily-quote" aria-live="polite"></div>
     </div>
   </footer>
 
   <script src="js/bool-engine.js"></script>
   <script src="js/simplificador-app.js"></script>
   <script src="js/scroll-hint.js"></script>
+  <script src="js/pdf-text.js"></script>
+  <script src="js/entregable.js"></script>
+  <script src="js/consigna-pdf.js"></script>
+  <script src="js/site.js"></script>
 </body>
 </html>

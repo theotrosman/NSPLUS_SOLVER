@@ -190,7 +190,36 @@
     renderKmap(r);
     $("result").hidden = false;
     $("result").scrollIntoView({ behavior: "smooth", block: "start" });
+    if (window.ORT) window.ORT.done();
   }
+
+  /* --- Entregable --- */
+  function tableSection(r) {
+    var tt = BoolEngine.truthTable(r.tree), fs = BoolEngine.truthTable(r.resultTree, tt.vars);
+    return { title: "Tabla de verdad (verificación)", table: { head: tt.vars.concat(["F", "Fs"]), rows: tt.rows.map(function (row, i) { return row.values.concat([row.out, fs.rows[i].out]); }) } };
+  }
+  function exerciseSections(r, label) {
+    var out = [
+      { title: (label ? label + " · " : "") + "Simplificación paso a paso", pre: plainSteps(r) },
+      { title: "Resultado", text: "Fs = " + r.result + (r.isMinimal ? "" : "\n\nForma mínima posible (Karnaugh): " + r.minimal) }
+    ];
+    if (r.vars.length <= 4) out.push(tableSection(r));
+    return out;
+  }
+  $("pdf").addEventListener("click", function () {
+    if (!last) return;
+    ORTDoc.pdf({ tool: "Simplificador booleano", title: "Simplificación de " + last.input, subtitle: "Álgebra de Boole paso a paso, con el nombre de cada ley.", filename: "simplificacion", sections: exerciseSections(last) });
+  });
+  window.ORTConsigna = window.ORTConsigna || {};
+  window.ORTConsigna.onItem = function (it) { input.value = String(it.expr).replace(/'/g, "’"); onInput(); run(); };
+  window.ORTConsigna.all = function (items, consignaText) {
+    var sections = [{ title: "Consigna", pre: consignaText.slice(0, 4000) }];
+    items.forEach(function (it) {
+      try { sections = sections.concat(exerciseSections(BoolEngine.simplify(it.expr), it.label)); }
+      catch (e) { sections.push({ title: it.label, text: "No se pudo leer la expresión \"" + it.expr + "\": " + e.message }); }
+    });
+    ORTDoc.pdf({ tool: "Simplificador booleano", title: "Ejercicios de simplificación", subtitle: items.length + " ejercicios resueltos paso a paso.", filename: "simplificaciones", sections: sections });
+  };
 
   $("form").addEventListener("submit", function (e) { e.preventDefault(); run(); });
   $("copy").addEventListener("click", function () {

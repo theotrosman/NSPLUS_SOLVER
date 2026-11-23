@@ -14,6 +14,9 @@ Página con herramientas simples para la materia de Informática. La página pri
 | IP, subredes y VLSM | `/subredes` | `subredes.html` |
 | Modelo OSI y TCP/IP | `/osi` | `osi.html` |
 | Laboratorio de TDA | `/tda` | `tda.html` |
+| Consultas SQL | `/sql` | `sql.html` |
+| Simulador de memoria | `/memoria` | `memoria.html` |
+| Adaptador de código | `/adaptador` | `adaptador.html` |
 
 Para sumar una herramienta nueva: crear su `.html` en la raíz y agregar su tarjeta en `index.html`.
 
@@ -119,6 +122,23 @@ Pila, Cola y Lista Ordenada con los métodos de las interfaces de la materia (`p
 UML Solver además genera el **código de las clases en Java o C#** (atributos, relaciones como listas, constructores con `super`/`base`, herencia, interfaces, abstractas y enums).
 
 Todas las páginas muestran un aviso "Deslizá para ver más ↓" cuando hay contenido abajo, y "Hay más abajo" cuando aparece un resultado fuera de la pantalla (`js/scroll-hint.js`).
+## Consultas SQL (Bases de Datos 4)
+
+Consigna (o PDF) + tablas del DLR opcionales + interruptores de los temas vistos (DDL, DML, SELECT, JOIN, agregación y GROUP BY, HAVING, subconsultas, stored procedures, transacciones…). La IA arma cada consulta en T-SQL de SQL Server usando solo lo prendido. Se descarga como script `.sql` y como PDF.
+
+## Simulador de memoria (TI 4)
+
+Sin IA. Reemplazo de páginas FIFO, LRU y Óptimo marco por marco con fallos y aciertos (probado con el ejemplo clásico 15/12/9 y la anomalía de Belady) y traducción de dirección lógica a física con paginación. PDF y CSV.
+
+## Adaptador de código (Arte 4 y las demás)
+
+Elegís la materia (HTML y CSS, SQL, C# o Java), pegás el código o subís el archivo, prendés lo que viste y apagás lo que no: lo reescribe haciendo lo mismo solo con lo visto y explica cada cambio. Descarga del código y PDF con los cambios.
+
+## Para todas las herramientas
+
+- **Consigna en PDF en todas**: en las calculadoras (simplificador, bases, redes, TDA, memoria, OSI) un lector de consignas encuentra los ejercicios con IA (`api/extract.js`) y la herramienta los resuelve sin IA; "Resolver todos y descargar el PDF" arma un solo entregable.
+- **Entregable descargable en todas** (`js/entregable.js`): PDF prolijo con consigna, resultado y pasos, más el archivo propio de cada una (`.nsplus`, `.uxf`, `.sql`, código, `.csv`).
+- **Frase del día** en el pie y un **pedido de estrella** al repo después de cada uso (`js/site.js`).
 ## Aviso
 
 Herramienta independiente y no oficial. No está afiliada a ORT ni a NS Plus; NS Plus es obra de sus autores, los profesores C. Daniel Vázquez y Carlos E. Cimino. La IA puede equivocarse: revisá siempre el diagrama con una prueba de escritorio.

@@ -41,7 +41,9 @@
     return "[" + items.map(show).join(", ") + "]";
   }
 
+  var history = [];
   function log(code, result, kindOf) {
+    history.push([VAR[kind] + "." + code + ";", result]);
     var li = el("li", kindOf || "");
     li.appendChild(el("code", null, VAR[kind] + "." + code + ";"));
     li.appendChild(el("span", null, result));
@@ -163,7 +165,7 @@
   }
 
   function selectKind(k) {
-    kind = k; items = []; highlight = null; leaving = null;
+    kind = k; items = []; highlight = null; leaving = null; history = [];
     $("log").innerHTML = "";
     $("tda-desc").textContent = DESC[k];
     $("iface").textContent = IFACES.base + IFACES[k];
@@ -181,6 +183,72 @@
   $("reset").addEventListener("click", function () { items = []; highlight = null; leaving = null; $("log").innerHTML = ""; render(); });
   $("cap").addEventListener("input", render);
   $("value").addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); $("ops").firstChild.click(); } });
+
+  /* ---------- Operaciones desde la consigna ---------- */
+  function findOp(method) {
+    var m = String(method).replace(/\(.*$/, "").trim().toLowerCase();
+    return OPS[kind].concat(COMMON).find(function (o) { return o[0].replace(/\(.*$/, "").toLowerCase() === m; });
+  }
+  function runOps(k, ops, done) {
+    document.querySelector('.tab[data-tab="' + k + '"]').click();
+    var i = 0;
+    (function next() {
+      if (i >= ops.length) { if (done) done(); return; }
+      var o = ops[i++], op = findOp(o.method);
+      if (op) {
+        if (o.arg != null) $("value").value = String(o.arg);
+        highlight = null; leaving = null;
+        op[2]();
+        render();
+      } else log(o.method + "()", "✗ Ese método no existe en " + k + ".", "bad");
+      setTimeout(next, 450);
+    })();
+  }
+  function pdfSections(title) {
+    return [
+      { title: title || "Operaciones", table: { head: ["#", "Llamada en Java", "Qué pasa / qué devuelve"], rows: history.map(function (h, i) { return [i + 1, h[0], h[1]]; }) } },
+      { title: "Estado final", text: (kind === "pila" ? "Pila" : kind === "cola" ? "Cola" : "Lista ordenada") + ": " + state() + " · size() = " + items.length },
+      { title: "Interfaz en Java", pre: IFACES.base + IFACES[kind] }
+    ];
+  }
+  var pdfBtn = el("button", "btn btn-primary", "Descargar registro (PDF)");
+  pdfBtn.type = "button";
+  pdfBtn.addEventListener("click", function () {
+    if (!history.length) { alert("Primero hacé alguna operación."); return; }
+    ORTDoc.pdf({ tool: "Laboratorio de TDA", title: "Seguimiento de " + (kind === "pila" ? "Pila<T>" : kind === "cola" ? "Cola<T>" : "ListaOrdenada<K,T>"), subtitle: DESC[kind], filename: "tda-" + kind, sections: pdfSections() });
+  });
+  var bar = el("div", "result-actions");
+  bar.appendChild(pdfBtn);
+  document.querySelector(".tda-stage").after(bar);
+
+  window.ORTConsigna = window.ORTConsigna || {};
+  window.ORTConsigna.onItem = function (it) {
+    var k = it.kind === "cola" ? "cola" : it.kind === "lista" ? "lista" : "pila";
+    document.querySelector(".tda-stage").scrollIntoView({ behavior: "smooth", block: "start" });
+    runOps(k, it.ops || [], function () { if (window.ORT) window.ORT.done(); });
+  };
+  window.ORTConsigna.all = function (items, consignaText) {
+    var sections = [{ title: "Consigna", pre: consignaText.slice(0, 4000) }];
+    var i = 0;
+    (function next() {
+      if (i >= items.length) {
+        ORTDoc.pdf({ tool: "Laboratorio de TDA", title: "Ejercicios de TDA", subtitle: items.length + " ejercicios con su seguimiento.", filename: "tda", sections: sections });
+        return;
+      }
+      var it = items[i++], k = it.kind === "cola" ? "cola" : it.kind === "lista" ? "lista" : "pila";
+      selectKind(k);
+      document.querySelectorAll(".tab").forEach(function (o) { o.classList.toggle("is-active", o.getAttribute("data-tab") === k); });
+      (it.ops || []).forEach(function (o) {
+        var op = findOp(o.method);
+        if (!op) { log(o.method + "()", "✗ Ese método no existe en " + k + ".", "bad"); return; }
+        if (o.arg != null) $("value").value = String(o.arg);
+        op[2]();
+      });
+      render();
+      sections = sections.concat(pdfSections(it.label + " (" + k + ")"));
+      next();
+    })();
+  };
 
   nextRandom();
   selectKind("pila");

@@ -153,6 +153,7 @@
     box.innerHTML = "";
     if (quiz.i >= quiz.list.length) {
       box.appendChild(el("p", "quiz-score", quiz.ok + " de " + quiz.list.length + " bien" + (quiz.ok >= 8 ? " · ¡Excelente!" : quiz.ok >= 6 ? " · ¡Bien!" : " · Repasá las capas y probá otra vez.")));
+      if (window.ORT) window.ORT.done();
       var again = el("button", "btn btn-primary", "Otra ronda");
       again.type = "button";
       again.addEventListener("click", startQuiz);
@@ -186,6 +187,40 @@
     });
     box.appendChild(opts);
   }
+
+  /* ---------- Entregables ---------- */
+  function studySheet() {
+    return [{ title: "Las 7 capas de OSI y su equivalente en TCP/IP", table: { head: ["#", "Capa OSI", "TCP/IP", "Qué hace", "PDU", "Protocolos", "Dispositivos"],
+      rows: LAYERS.map(function (l) { return [l.n, l.name, l.tcp, l.what, l.pdu, l.protocols.join(" · "), l.devices.join(" · ")]; }) } },
+      { title: "Encapsulamiento", list: ["Aplicación: los datos del programa.", "Transporte: + encabezado TCP/UDP con puertos → segmento.", "Red: + encabezado IP con direcciones IP → paquete.", "Enlace: + direcciones MAC y control de errores (FCS) → trama.", "Física: se transmite como bits."] }];
+  }
+  var pdfBtn = el("button", "btn btn-primary", "Descargar hoja de estudio (PDF)");
+  pdfBtn.type = "button";
+  pdfBtn.addEventListener("click", function () { ORTDoc.pdf({ tool: "Modelo OSI y TCP/IP", title: "Modelo OSI y TCP/IP", subtitle: "Hoja de estudio: capas, PDU, protocolos y dispositivos.", filename: "osi-tcp-ip", sections: studySheet() }); });
+  var actions = el("div", "result-actions");
+  actions.appendChild(pdfBtn);
+  document.querySelector("main .card:not(.consigna-card)") && document.querySelector("main section.card").appendChild(actions);
+
+  window.ORTConsigna = window.ORTConsigna || {};
+  window.ORTConsigna.render = function (items, box) {
+    var wrap = el("div", "osi-answers");
+    items.forEach(function (it) {
+      var c = el("div", "osi-answer");
+      c.appendChild(el("strong", null, it.label + ": " + (it.question || "")));
+      c.appendChild(el("p", null, "Respuesta: " + (it.answer || "")));
+      if (it.explanation) c.appendChild(el("p", "muted", it.explanation));
+      wrap.appendChild(c);
+    });
+    box.appendChild(wrap);
+    var b = el("button", "btn btn-primary cc-all", "Descargar las respuestas (PDF)");
+    b.type = "button";
+    b.addEventListener("click", function () {
+      ORTDoc.pdf({ tool: "Modelo OSI y TCP/IP", title: "Respuestas: redes, OSI y TCP/IP", filename: "respuestas-osi",
+        sections: items.map(function (it) { return { title: it.label + ": " + (it.question || ""), text: (it.answer || "") + (it.explanation ? "\n\n" + it.explanation : "") }; }).concat(studySheet()) });
+    });
+    box.appendChild(b);
+    if (window.ORT) window.ORT.done();
+  };
 
   renderStack();
   renderEncap();

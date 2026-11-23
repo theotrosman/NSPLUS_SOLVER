@@ -15,6 +15,9 @@ import { fileURLToPath } from "node:url";
 import handler from "./api/generate.js";
 import umlHandler from "./api/uml.js";
 import pcHandler, { normalizePc } from "./api/pc.js";
+import extractHandler from "./api/extract.js";
+import sqlHandler from "./api/sql.js";
+import adaptHandler from "./api/adapt.js";
 import { normalizeUml } from "./api/_uml-normalize.js";
 
 const root = fileURLToPath(new URL(".", import.meta.url));
@@ -103,6 +106,28 @@ const DEMO_CLASSES = {
   ]
 };
 
+// APIs nuevas con su respuesta de ejemplo para el modo demo (sin GROQ_API_KEY)
+const DEMO_EXTRACT = {
+  bool: [{ label: "Ejercicio 1", expr: "AB(A+CB')" }, { label: "Ejercicio 2", expr: "[ (B+CA)' + C ]' + D' + C" }],
+  base: [{ label: "1.a", kind: "convert", number: "45", from: 10, to: 2 }, { label: "1.b", kind: "convert", number: "2D", from: 16, to: 10 }, { label: "2", kind: "op", a: "1011", op: "+", b: "110" }],
+  ip: [{ label: "1", kind: "calc", ip: "172.16.5.77", mask: "/20" }, { label: "2", kind: "vlsm", network: "10.0.0.0/24", subnets: [{ name: "Aulas", hosts: 100 }, { name: "Secretaría", hosts: 25 }, { name: "Enlace", hosts: 2 }] }],
+  tda: [{ label: "1", kind: "pila", ops: [{ method: "push", arg: "4" }, { method: "push", arg: "9" }, { method: "peek" }, { method: "pop" }, { method: "push", arg: "1" }] }],
+  memoria: [{ label: "1", kind: "replace", refs: [1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5], frames: 3, algorithms: ["FIFO", "LRU"] }, { label: "2", kind: "translate", pageSize: 2048, address: 9000, pageTable: { 0: 3, 1: 6, 2: 1, 3: 4, 4: 2 } }],
+  osi: [{ label: "Pregunta 1", question: "¿En qué capa trabaja el router?", answer: "En la capa 3, Red.", explanation: "El router usa direcciones IP para elegir el camino entre redes." }]
+};
+const EXTRA = {
+  "/api/extract": { handler: extractHandler, demo: (b) => ({ items: DEMO_EXTRACT[b.tool] || [], model: "demo" }) },
+  "/api/sql": { handler: sqlHandler, demo: () => ({ model: "demo", result: {
+    name: "Demo: escuela", explanation: "Modo demo (sin GROQ_API_KEY). Se usan las tablas Alumnos y Cursos.", schema: "Alumnos(IdAlumno, Nombre, Apellido, IdCurso)\nCursos(IdCurso, Nombre, Anio)",
+    items: [
+      { label: "1", statement: "Listar los alumnos ordenados por apellido", sql: "SELECT Nombre, Apellido\nFROM Alumnos\nORDER BY Apellido;", explanation: "Trae nombre y apellido de todos los alumnos, ordenados de la A a la Z por apellido." },
+      { label: "2", statement: "Cantidad de alumnos por curso", sql: "SELECT C.Nombre, COUNT(A.IdAlumno) AS Cantidad\nFROM Cursos AS C\nINNER JOIN Alumnos AS A ON A.IdCurso = C.IdCurso\nGROUP BY C.Nombre;", explanation: "Une cursos con alumnos y cuenta cuántos alumnos hay en cada curso." }
+    ] } }) },
+  "/api/adapt": { handler: adaptHandler, demo: (b) => ({ model: "demo", result: {
+    code: String(b.code || "").replace(/display:\s*grid/g, "display: flex"), changes: [{ before: "display: grid", after: "display: flex", why: "Modo demo: si Grid no se vio, se arma la misma fila con Flexbox." }],
+    used: ["Flexbox"], notes: "Modo demo (sin GROQ_API_KEY): solo se muestra un ejemplo de cambio." } }) }
+};
+
 function wrapRes(res) {
   res.status = (code) => { res.statusCode = code; return res; };
   res.json = (obj) => { res.setHeader("Content-Type", "application/json; charset=utf-8"); res.end(JSON.stringify(obj)); return res; };
@@ -112,6 +137,16 @@ function wrapRes(res) {
 http.createServer(async (req, res) => {
   wrapRes(res);
   const url = new URL(req.url, `http://${req.headers.host}`);
+  if (EXTRA[url.pathname]) {
+    let raw = "";
+    for await (const chunk of req) raw += chunk;
+    try { req.body = JSON.parse(raw || "{}"); } catch { req.body = {}; }
+    if (!process.env.GROQ_API_KEY) {
+      await new Promise((r) => setTimeout(r, 700));
+      return res.status(200).json(EXTRA[url.pathname].demo(req.body));
+    }
+    return EXTRA[url.pathname].handler(req, res);
+  }
   if (url.pathname === "/api/pc") {
     let raw = "";
     for await (const chunk of req) raw += chunk;

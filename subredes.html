@@ -37,6 +37,8 @@
       <p>Calculá red, broadcast, hosts y máscara de cualquier IP, dividí una red en partes iguales o armá el plan VLSM ordenando de mayor a menor. Sin IA: todo se calcula.</p>
     </section>
 
+    <div data-consigna="ip"></div>
+
     <section class="card">
       <div class="tabs tabs-top" role="tablist">
         <button class="tab is-active" role="tab" data-tab="calc" aria-selected="true">Calculadora IP</button>
@@ -79,6 +81,10 @@
         <p id="v-error" class="form-error" hidden></p>
         <div id="v-out"></div>
       </div>
+      <div class="result-actions">
+        <button id="pdf" class="btn btn-primary" type="button">Descargar entregable (PDF)</button>
+        <button id="csv" class="btn" type="button">Descargar tabla (Excel / CSV)</button>
+      </div>
     </section>
 
     <p class="credit-inline"><a href="/">← Volver a todas las herramientas</a><br>La calculadora de redes fue creada por <a href="https://github.com/theotrosman" target="_blank" rel="noopener">Theo Trosman</a>. © 2026 Theo Trosman. Todos los derechos reservados.</p>
@@ -95,13 +101,18 @@
         <p class="footer-brand">ORT Info es fácil · IP y VLSM</p>
         <p>© <span id="year">2026</span> Theo Trosman. Todos los derechos reservados.</p>
         <p>Diseñado y desarrollado por <a href="https://github.com/theotrosman" target="_blank" rel="noopener">Theo Trosman</a> · <a href="https://github.com/theotrosman/NSPLUS_SOLVER" target="_blank" rel="noopener">Código en GitHub</a></p>
+        <p class="footer-note">Proyecto independiente y no oficial, hecho por un alumno.</p>
       </div>
-      <p class="disclaimer"><strong>*</strong> Sí, se parece muchísimo a NS Plus. Es a propósito. Sitio independiente y no oficial, hecho por un alumno. No está afiliado a ORT Argentina.</p>
+      <div class="daily-quote" id="daily-quote" aria-live="polite"></div>
     </div>
   </footer>
 
   <script src="js/ip-engine.js"></script>
   <script src="js/subredes-app.js"></script>
   <script src="js/scroll-hint.js"></script>
+  <script src="js/pdf-text.js"></script>
+  <script src="js/entregable.js"></script>
+  <script src="js/consigna-pdf.js"></script>
+  <script src="js/site.js"></script>
 </body>
 </html>

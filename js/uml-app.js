@@ -165,6 +165,7 @@
       current = { uml: data.uml, consigna: text };
       try { localStorage.setItem(STORAGE_KEY, JSON.stringify(current)); } catch (e) { /* sin espacio */ }
       renderResult(true);
+      if (window.ORT) window.ORT.done();
     } catch (err) {
       $("error-text").textContent = err.message === "Failed to fetch" ? "No hay conexión. Revisá internet y probá de nuevo." : err.message;
       show("error");
@@ -294,6 +295,36 @@
     img.onerror = function () { toast("No se pudo crear la imagen. Probá con el archivo de UMLetino."); };
     img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
   });
+
+  /* --- Entregable en PDF --- */
+  (function () {
+    var b = el("button", "btn btn-sm", "Descargar entregable (PDF)");
+    b.type = "button";
+    $("download-png").after(b);
+    b.addEventListener("click", function () {
+      if (!current) return;
+      var u = current.uml;
+      var rels = u.relations.map(function (r) {
+        return r.from + " " + (REL_TEXT[r.type] || "se relaciona con") + " " + r.to + (r.role ? " (atributo «" + r.role + "»)" : "") + (r.multiplicity ? " [" + r.multiplicity + "]" : "");
+      });
+      var sel = document.querySelector('input[name="code-lang"]:checked');
+      var files = window.UMLCode ? UMLCode.generate(u, sel ? sel.value : "java") : [];
+      ORTDoc.pdf({
+        tool: "UML Solver", title: u.name, subtitle: "Diagrama de clases UML.", filename: fileName(u.name),
+        sections: [
+          current.consigna ? { title: "Consigna", pre: current.consigna.slice(0, 5000) } : null,
+          u.explanation ? { title: "Cómo se armó", text: u.explanation } : null,
+          { title: "Diagrama de clases", html: UMLLayout.buildSvg(u) },
+          { title: "Clases", table: { head: ["Clase", "Atributos", "Métodos"], rows: u.classes.map(function (c) {
+            return [c.name + (c.kind !== "class" ? " (" + c.kind + ")" : ""), c.kind === "enum" ? c.values.join(", ") : c.attributes.map(function (a) { return "- " + a.name + ": " + a.type; }).join("\n"),
+              c.methods.map(UMLLayout.methodText).join("\n")];
+          }) } },
+          rels.length ? { title: "Relaciones", list: rels } : null,
+          files.length ? { title: "Código de las clases", pre: files.map(function (f) { return f.code; }).join("\n\n") } : null
+        ]
+      });
+    });
+  })();
 
   $("regenerate").addEventListener("click", generate);
   $("retry").addEventListener("click", generate);

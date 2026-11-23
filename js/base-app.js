@@ -135,7 +135,10 @@
     }
     box.appendChild(el("p", "answer", r.input + sub(r.from) + " = " + r.value + (r.approx ? "…" : "") + sub(r.to)));
     box.hidden = false;
+    clearTimeout(doneTimer);
+    doneTimer = setTimeout(function () { if (window.ORT) window.ORT.done(); }, 6000);
   }
+  var doneTimer = null;
 
   ["input", "change"].forEach(function (ev) {
     $("num").addEventListener(ev, update);
@@ -209,4 +212,86 @@
     $("c-num").addEventListener(ev, updateComp);
     $("c-bits").addEventListener(ev, updateComp);
   });
+
+  /* ---------- Entregable (texto del método, igual al de la pantalla) ---------- */
+  function sub10(n) { return String(n).split("").map(function (c) { return "₀₁₂₃₄₅₆₇₈₉"[+c]; }).join(""); }
+  function methodText(r) {
+    var m = r.method, L = [];
+    function poly() { var p = m.poly; L.push("Polinomio (a decimal):", r.input + sub10(r.from) + " = " + p.terms.join(" + "), "= " + p.values.join(" + "), "= " + p.result, ""); }
+    function div() {
+      L.push("Divisiones sucesivas por " + r.to + " (se leen los restos de abajo hacia arriba):");
+      m.div.rows.forEach(function (x) { L.push("  " + x.dividend + " ÷ " + r.to + " = " + x.quotient + "   resto " + x.digit); });
+      if (m.mult && m.mult.rows.length) {
+        L.push("", "Parte con coma: multiplicaciones sucesivas por " + r.to + " (se lee de arriba hacia abajo):");
+        m.mult.rows.forEach(function (x) { L.push("  " + x.value + " × " + r.to + " = " + x.times + "   → " + x.digit); });
+      }
+      L.push("");
+    }
+    if (m.kind === "group" || m.kind === "expand") {
+      L.push(m.kind === "group" ? "Grupos de " + m.data.size + " bits desde la coma:" : "Cada dígito en " + m.data.size + " bits:");
+      m.data.intGroups.concat(m.data.fracGroups).forEach(function (g) { L.push("  " + (m.kind === "group" ? g.bits + " → " + g.digit : g.digit + " → " + g.bits)); });
+      L.push("");
+    } else if (m.kind === "poly") poly();
+    else if (m.kind === "div") div();
+    else if (m.kind === "via10") { poly(); div(); }
+    L.push("Resultado: " + r.input + sub10(r.from) + " = " + r.value + (r.approx ? "…" : "") + sub10(r.to));
+    return L.join("\n");
+  }
+  function opText(r) {
+    if (r.op === "×") return r.a + " × " + r.b + "\nParciales:\n" + r.partials.map(function (p) { return "  " + p; }).join("\n") + "\nResultado: " + r.result + "₂ (decimal " + r.check + ")";
+    return (r.op === "+" ? "Acarreos: " : "Préstamos: ") + r.carries.trim() + "\n  " + r.a + "\n" + r.op + " " + r.b + "\n= " + r.result + "₂  (decimal " + r.check + ")";
+  }
+  function compText(r) { return "Número con " + r.bits + " bits: " + r.original + "\nComplemento a 1 (invertir): " + r.c1 + "\nComplemento a 2 (C1 + 1): " + r.c2; }
+
+  function itemSection(it) {
+    try {
+      if (it.kind === "convert") return { title: it.label + " · " + it.number + " de base " + it.from + " a base " + it.to, pre: methodText(E.convert(String(it.number), +it.from, +it.to)) };
+      if (it.kind === "op") { var op = it.op === "-" || it.op === "−" ? E.subBin(it.a, it.b) : it.op === "*" || it.op === "×" ? E.mulBin(it.a, it.b) : E.addBin(it.a, it.b); return { title: it.label + " · Operación en binario", pre: opText(op) }; }
+      if (it.kind === "complement") return { title: it.label + " · Complementos", pre: compText(E.complement(String(it.number), +it.bits || 8)) };
+    } catch (e) { return { title: it.label, text: "No se pudo resolver: " + e.message }; }
+    return null;
+  }
+
+  $("pdf").addEventListener("click", function () {
+    var sections = [];
+    var text = $("num").value.trim(), from = fromBase();
+    if (text && from) {
+      var targets = TARGETS.slice(); var extra = extraTarget(); if (extra && targets.indexOf(extra) < 0) targets.push(extra);
+      targets.filter(function (t) { return t !== from; }).forEach(function (t) {
+        try { sections.push({ title: text + " en " + E.baseName(t), pre: methodText(E.convert(text, from, t)) }); } catch (e) { /* inválido */ }
+      });
+    }
+    if ($("op-a").value.trim() && $("op-b").value.trim()) sections.push(itemSection({ kind: "op", label: "Operación", a: $("op-a").value.trim(), b: $("op-b").value.trim(), op: $("op").value }));
+    if ($("c-num").value.trim()) sections.push(itemSection({ kind: "complement", label: "Complemento", number: $("c-num").value.trim(), bits: $("c-bits").value }));
+    if (!sections.length) { alert("Primero escribí un número para convertir."); return; }
+    ORTDoc.pdf({ tool: "Cambio de base", title: "Cambio de base y operaciones", subtitle: "Con el método de cada paso.", filename: "cambio-de-base", sections: sections });
+  });
+
+  window.ORTConsigna = window.ORTConsigna || {};
+  window.ORTConsigna.onItem = function (it) {
+    if (it.kind === "convert") {
+      $("num").value = String(it.number);
+      var f = String(it.from);
+      if (["2", "8", "10", "16"].indexOf(f) >= 0) $("from").value = f; else { $("from").value = "other"; $("from-other").value = f; }
+      var t = +it.to;
+      if (TARGETS.indexOf(t) < 0) $("to-other").value = t;
+      selected = t;
+      update();
+      $("method").scrollIntoView({ behavior: "smooth", block: "start" });
+    } else if (it.kind === "op") {
+      $("op-a").value = it.a; $("op-b").value = it.b;
+      $("op").value = it.op === "-" || it.op === "−" ? "-" : it.op === "*" || it.op === "×" ? "*" : "+";
+      updateOps();
+      $("op-result").scrollIntoView({ behavior: "smooth", block: "start" });
+    } else if (it.kind === "complement") {
+      $("c-num").value = it.number; $("c-bits").value = it.bits || 8;
+      updateComp();
+      $("c-result").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    if (window.ORT) window.ORT.done();
+  };
+  window.ORTConsigna.all = function (items, consignaText) {
+    var sections = [{ title: "Consigna", pre: consignaText.slice(0, 4000) }].concat(items.map(itemSection).filter(Boolean));
+    ORTDoc.pdf({ tool: "Cambio de base", title: "Ejercicios de cambio de base", subtitle: items.length + " ejercicios resueltos con su método.", filename: "cambio-de-base", sections: sections });
+  };
 })();

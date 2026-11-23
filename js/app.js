@@ -205,6 +205,7 @@
       current = { project: data.project, consigna: text };
       try { localStorage.setItem(STORAGE_KEY, JSON.stringify(current)); } catch (e) { /* sin espacio */ }
       renderResult(true);
+      if (window.ORT) window.ORT.done();
     } catch (err) {
       $("error-text").textContent = err.message === "Failed to fetch"
         ? "No hay conexión. Revisá internet y probá de nuevo."
@@ -274,6 +275,32 @@
     setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
     toast("Descargado: " + a.download + ". Ahora abrilo en NS Plus con el botón de la carpeta.");
   });
+
+  /* --- Entregable en PDF: consigna, explicación y diagramas --- */
+  (function () {
+    var dl = $("download"), group = document.createElement("div");
+    group.className = "download-group";
+    dl.parentNode.insertBefore(group, dl);
+    group.appendChild(dl);
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "btn btn-sm";
+    b.textContent = "Descargar entregable (PDF)";
+    group.appendChild(b);
+    b.addEventListener("click", function () {
+      if (!current) return;
+      var p = current.project;
+      var diagrams = Array.prototype.map.call(document.querySelectorAll("#diagrams .diagram-frame, #diagrams .class-title"), function (n) { return n.outerHTML; }).join("");
+      ORTDoc.pdf({
+        tool: "NS Solver", title: p.name, subtitle: "Diagrama Nassi-Shneiderman (NS Plus).", filename: fileName(p.name), stylesheet: true,
+        sections: [
+          current.consigna ? { title: "Consigna", pre: current.consigna.slice(0, 5000) } : null,
+          p.explanation ? { title: "Cómo funciona", text: p.explanation } : null,
+          { title: "Diagrama" + (p.diagrams.length > 1 ? "s" : ""), html: "<div class=\"diagrams\">" + diagrams + "</div>" }
+        ]
+      });
+    });
+  })();
 
   $("regenerate").addEventListener("click", generate);
   $("retry").addEventListener("click", generate);

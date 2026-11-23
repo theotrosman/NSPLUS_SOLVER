@@ -1,0 +1,108 @@
+<!doctype html>
+<!--
+  ORT Info es fácil · Simulador de memoria
+  © 2026 Theo Trosman. Todos los derechos reservados.
+  https://github.com/theotrosman
+-->
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Simulador de memoria: FIFO, LRU, Óptimo y paginación · ORT Info es fácil · por Theo Trosman</title>
+  <meta name="description" content="Reemplazo de páginas con FIFO, LRU y Óptimo paso a paso, con fallos y aciertos, y traducción de direcciones con paginación. Creado por Theo Trosman.">
+  <meta name="author" content="Theo Trosman">
+  <meta name="copyright" content="© 2026 Theo Trosman. Todos los derechos reservados.">
+  <link rel="author" href="https://github.com/theotrosman">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231d2433'/%3E%3Cpath d='M6 9h20M6 9l10 9 10-9M16 18v6M6 24h20' stroke='%23f2efe8' stroke-width='2' fill='none'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <nav class="crumbs" aria-label="Ubicación">
+        <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span class="brand-name">ORT Info es fácil</span></a>
+        <span class="crumb-sep" aria-hidden="true">/</span>
+        <span class="crumb-current">Memoria</span>
+      </nav>
+      <a class="byline" href="https://github.com/theotrosman" target="_blank" rel="noopener"><span>por <strong>Theo Trosman</strong></span></a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hall-hero tool-hero">
+      <h1>Simulador de memoria.</h1>
+      <p>Reemplazo de páginas con FIFO, LRU y Óptimo, marco por marco, con fallos y aciertos. Y traducción de direcciones lógicas a físicas con paginación. Sin IA: todo se calcula.</p>
+    </section>
+
+    <div data-consigna="memoria"></div>
+
+    <section class="card">
+      <div class="tabs tabs-top" role="tablist">
+        <button class="tab is-active" role="tab" data-tab="replace" aria-selected="true">Reemplazo de páginas</button>
+        <button class="tab" role="tab" data-tab="translate" aria-selected="false">Traducción de direcciones</button>
+      </div>
+
+      <div class="tab-panel" data-panel="replace">
+        <div class="base-form mem-form">
+          <label>Cadena de referencias (páginas)<input id="refs" class="field mono" type="text" value="7 0 1 2 0 3 0 4 2 3 0 3 2 1 2 0 1 7 0 1"></label>
+          <label>Marcos<input id="frames" class="field mono" type="number" min="1" max="10" value="3"></label>
+        </div>
+        <div class="seg" role="group" aria-label="Algoritmos" style="margin-top:12px">
+          <label><input type="checkbox" name="algo" value="FIFO" checked><span>FIFO</span></label>
+          <label><input type="checkbox" name="algo" value="LRU" checked><span>LRU</span></label>
+          <label><input type="checkbox" name="algo" value="OPT" checked><span>Óptimo</span></label>
+        </div>
+        <p id="r-error" class="form-error" hidden></p>
+        <div id="r-out"></div>
+      </div>
+
+      <div class="tab-panel" data-panel="translate" hidden>
+        <div class="base-form mem-form">
+          <label>Tamaño de página (bytes)<input id="t-size" class="field mono" type="number" min="1" value="1024"></label>
+          <label>Dirección lógica<input id="t-addr" class="field mono" type="number" min="0" value="3500"></label>
+        </div>
+        <label class="base-form" style="display:grid;margin-top:12px;font-weight:700;font-size:14px;gap:6px">Tabla de páginas (página: marco)
+          <input id="t-table" class="field mono" type="text" value="0:5, 1:2, 2:7, 3:1">
+        </label>
+        <p id="t-error" class="form-error" hidden></p>
+        <div id="t-out"></div>
+      </div>
+
+      <div class="result-actions">
+        <button id="pdf" class="btn btn-primary" type="button">Descargar entregable (PDF)</button>
+        <button id="csv" class="btn" type="button">Descargar tabla (Excel / CSV)</button>
+      </div>
+    </section>
+
+    <p class="credit-inline"><a href="/">← Volver a todas las herramientas</a><br>El Simulador de memoria fue creado por <a href="https://github.com/theotrosman" target="_blank" rel="noopener">Theo Trosman</a>. © 2026 Theo Trosman. Todos los derechos reservados.</p>
+  </main>
+
+  <div class="indigo-bar" role="contentinfo" aria-label="Créditos">
+    <a class="ib-left" href="https://github.com/theotrosman" target="_blank" rel="noopener">Theo Trosman</a>
+    <span class="ib-motto">Para toda la Comunidad de ORT<sup>*</sup></span>
+    <a class="ib-right" href="https://github.com/theotrosman/NSPLUS_SOLVER" target="_blank" rel="noopener">© 2026 Theo Trosman</a>
+  </div>
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <div>
+        <p class="footer-brand">ORT Info es fácil · Memoria</p>
+        <p>© <span id="year">2026</span> Theo Trosman. Todos los derechos reservados.</p>
+        <p>Diseñado y desarrollado por <a href="https://github.com/theotrosman" target="_blank" rel="noopener">Theo Trosman</a> · <a href="https://github.com/theotrosman/NSPLUS_SOLVER" target="_blank" rel="noopener">Código en GitHub</a></p>
+        <p class="footer-note">Proyecto independiente y no oficial, hecho por un alumno.</p>
+      </div>
+      <div class="daily-quote" id="daily-quote" aria-live="polite"></div>
+    </div>
+  </footer>
+
+  <script src="js/mem-engine.js"></script>
+  <script src="js/entregable.js"></script>
+  <script src="js/memoria-app.js"></script>
+  <script src="js/pdf-text.js"></script>
+  <script src="js/consigna-pdf.js"></script>
+  <script src="js/scroll-hint.js"></script>
+  <script src="js/site.js"></script>
+</body>
+</html>
