@@ -229,7 +229,7 @@
       else if (tab === "flsm") sections = flsmSection($("f-net").value.trim(), $("f-count").value);
       else sections = vlsmSection($("v-net").value.trim(), vlsmReqs());
     } catch (e) { alert(e.message); return; }
-    ORTDoc.pdf({ tool: "IP, subredes y VLSM", title: tab === "calc" ? "Cálculo de dirección IP" : tab === "flsm" ? "Subredes iguales" : "Plan VLSM", filename: "redes", sections: sections });
+    ORTDoc.download({ tool: "IP, subredes y VLSM", title: tab === "calc" ? "Cálculo de dirección IP" : tab === "flsm" ? "Subredes iguales" : "Plan VLSM", filename: "redes", sections: sections });
   });
   $("csv").addEventListener("click", function () {
     var tab = activeTab(), rows;
@@ -269,7 +269,7 @@
   window.ORTConsigna.all = function (items, consignaText) {
     var sections = [{ title: "Consigna", pre: consignaText.slice(0, 4000) }];
     items.forEach(function (it) { sections = sections.concat(itemSections(it)); });
-    ORTDoc.pdf({ tool: "IP, subredes y VLSM", title: "Ejercicios de redes", subtitle: items.length + " ejercicios resueltos.", filename: "redes", sections: sections });
+    ORTDoc.download({ tool: "IP, subredes y VLSM", title: "Ejercicios de redes", subtitle: items.length + " ejercicios resueltos.", filename: "redes", sections: sections });
   };
 
   // Arranque

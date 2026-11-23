@@ -103,7 +103,7 @@
       sections.push({ title: it.label + ") " + (it.statement || ""), pre: it.sql });
       if (it.explanation) sections.push({ text: it.explanation });
     });
-    ORTDoc.pdf({ tool: "Creador de consultas SQL", title: r.name, subtitle: "Consultas para SQL Server.", filename: "consultas-sql", sections: sections });
+    ORTDoc.download({ tool: "Creador de consultas SQL", title: r.name, subtitle: "Consultas para SQL Server.", filename: "consultas-sql", sections: sections });
   });
   $("form").addEventListener("submit", function (e) { e.preventDefault(); generate(); });
   $("retry").addEventListener("click", generate);

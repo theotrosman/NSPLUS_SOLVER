@@ -299,13 +299,13 @@
     var b = document.createElement("button");
     b.type = "button";
     b.className = "btn btn-sm";
-    b.textContent = "Descargar entregable (PDF)";
+    b.textContent = "Descargar entregable";
     group.appendChild(b);
     b.addEventListener("click", function () {
       if (!current) return;
       var p = current.project;
       var diagrams = Array.prototype.map.call(document.querySelectorAll("#diagrams .diagram-frame, #diagrams .class-title"), function (n) { return n.outerHTML; }).join("");
-      ORTDoc.pdf({
+      ORTDoc.download({
         tool: "NS Solver", title: p.name, subtitle: "Diagrama Nassi-Shneiderman (NS Plus).", filename: fileName(p.name), stylesheet: true,
         sections: [
           current.consigna ? { title: "Consigna", pre: current.consigna.slice(0, 5000) } : null,

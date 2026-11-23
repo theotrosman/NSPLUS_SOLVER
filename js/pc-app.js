@@ -137,7 +137,7 @@
   (function () {
     var copy = $("copy"), group = el("div", "download-group");
     copy.parentNode.insertBefore(group, copy);
-    var b = el("button", "btn btn-primary btn-download", "Descargar entregable (PDF)");
+    var b = el("button", "btn btn-primary btn-download", "Descargar entregable");
     b.type = "button";
     group.appendChild(b);
     copy.className = "btn btn-sm";
@@ -158,7 +158,7 @@
       sections.push({ title: "¿Qué cambia entre las opciones?", text: p.comparison });
       sections.push({ title: "Recomendación", text: p.recommendation });
       if (p.glossary.length) sections.push({ title: "Glosario", table: { head: ["Término", "Qué significa"], rows: p.glossary.map(function (g) { return [g.term, g.meaning]; }) } });
-      ORTDoc.pdf({ tool: "Armador de PC", title: "Propuestas para " + p.client, subtitle: "Trabajo práctico de Componentes.", filename: "propuestas-pc", sections: sections });
+      ORTDoc.download({ tool: "Armador de PC", title: "Propuestas para " + p.client, subtitle: "Trabajo práctico de Componentes.", filename: "propuestas-pc", sections: sections });
     });
   })();
 

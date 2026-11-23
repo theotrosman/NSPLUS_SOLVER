@@ -128,7 +128,7 @@
         ? [{ title: "Datos", text: "Referencias: " + $("refs").value + "\nMarcos: " + $("frames").value }].concat(replaceSections($("refs").value, $("frames").value, algos()))
         : [translateSection($("t-size").value, $("t-addr").value, M.parseTable($("t-table").value))];
     } catch (e) { alert(e.message); return; }
-    ORTDoc.pdf({ tool: "Simulador de memoria", title: activeTab() === "replace" ? "Reemplazo de páginas" : "Traducción de direcciones", filename: "memoria", sections: sections });
+    ORTDoc.download({ tool: "Simulador de memoria", title: activeTab() === "replace" ? "Reemplazo de páginas" : "Traducción de direcciones", filename: "memoria", sections: sections });
   });
   $("csv").addEventListener("click", function () {
     var rows = [];
@@ -171,7 +171,7 @@
         }
       } catch (e) { sections.push({ title: it.label, text: "No se pudo resolver: " + e.message }); }
     });
-    ORTDoc.pdf({ tool: "Simulador de memoria", title: "Ejercicios de memoria", subtitle: items.length + " ejercicios resueltos.", filename: "memoria", sections: sections });
+    ORTDoc.download({ tool: "Simulador de memoria", title: "Ejercicios de memoria", subtitle: items.length + " ejercicios resueltos.", filename: "memoria", sections: sections });
   };
 
   renderReplace();

@@ -131,7 +131,7 @@
   $("dl-pdf").addEventListener("click", function () {
     if (!current) return;
     var r = current.r;
-    ORTDoc.pdf({
+    ORTDoc.download({
       tool: "Adaptador de código", title: "Código adaptado a lo visto en clase", subtitle: document.querySelector('input[name="preset"]:checked').parentNode.textContent.trim(), filename: "codigo-adaptado",
       sections: [
         { title: "Temas vistos", list: current.seen },

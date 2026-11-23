@@ -758,3 +758,11 @@ table.steps-table td.hl { color: var(--accent); font-weight: 700; }
 a.tool-card:hover .tool-icon { transform: translateY(-2px) rotate(-1.5deg); }
 .tool-icon { transition: transform .18s cubic-bezier(.3, .7, .4, 1); }
 @media (prefers-reduced-motion: reduce) { .tool-icon { transition: none; } a.tool-card:hover .tool-icon { transform: none; } }
+/* ---------- Cartelito elegir formato de descarga ---------- */
+.dl-modal-back { position: fixed; inset: 0; z-index: 40; background: rgba(20, 25, 36, .45); display: grid; place-items: center; padding: 20px; animation: toast-in .15s; }
+.dl-modal { background: var(--surface); color: var(--ink); border-radius: 16px; box-shadow: 0 20px 50px rgba(0, 0, 0, .35); padding: 22px; width: min(360px, 100%); text-align: center; }
+.dl-title { margin: 0 0 16px; font-weight: 800; font-size: 18px; }
+.dl-btns { display: flex; gap: 10px; justify-content: center; }
+.dl-btns .btn { flex: 1; justify-content: center; padding: 14px; font-size: 16px; }
+.dl-x { margin-top: 12px; border: 0; background: none; color: var(--muted); font: inherit; cursor: pointer; text-decoration: underline; }
+@media (prefers-reduced-motion: reduce) { .dl-modal-back { animation: none; } }

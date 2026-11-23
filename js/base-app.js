@@ -264,7 +264,7 @@
     if ($("op-a").value.trim() && $("op-b").value.trim()) sections.push(itemSection({ kind: "op", label: "Operación", a: $("op-a").value.trim(), b: $("op-b").value.trim(), op: $("op").value }));
     if ($("c-num").value.trim()) sections.push(itemSection({ kind: "complement", label: "Complemento", number: $("c-num").value.trim(), bits: $("c-bits").value }));
     if (!sections.length) { alert("Primero escribí un número para convertir."); return; }
-    ORTDoc.pdf({ tool: "Cambio de base", title: "Cambio de base y operaciones", subtitle: "Con el método de cada paso.", filename: "cambio-de-base", sections: sections });
+    ORTDoc.download({ tool: "Cambio de base", title: "Cambio de base y operaciones", subtitle: "Con el método de cada paso.", filename: "cambio-de-base", sections: sections });
   });
 
   window.ORTConsigna = window.ORTConsigna || {};
@@ -292,6 +292,6 @@
   };
   window.ORTConsigna.all = function (items, consignaText) {
     var sections = [{ title: "Consigna", pre: consignaText.slice(0, 4000) }].concat(items.map(itemSection).filter(Boolean));
-    ORTDoc.pdf({ tool: "Cambio de base", title: "Ejercicios de cambio de base", subtitle: items.length + " ejercicios resueltos con su método.", filename: "cambio-de-base", sections: sections });
+    ORTDoc.download({ tool: "Cambio de base", title: "Ejercicios de cambio de base", subtitle: items.length + " ejercicios resueltos con su método.", filename: "cambio-de-base", sections: sections });
   };
 })();

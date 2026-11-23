@@ -1,11 +1,15 @@
 /*!
- * ORT Info es fácil — entregables descargables
+ * ORT Info es fácil — entregables descargables (PDF o Word)
  * © 2026 Theo Trosman. Todos los derechos reservados.
  * https://github.com/theotrosman
  *
- * ORTDoc.pdf({...})   abre el entregable listo para imprimir / "Guardar como PDF".
- * ORTDoc.file(n, t)   descarga un archivo de texto (.sql, .java, .csv, etc.).
- * Secciones: { title, text } · { title, pre } · { title, html } · { title, table: { head: [], rows: [[]] } } · { title, list: [] }
+ * El documento que descarga el alumno NO lleva ninguna marca del sitio:
+ * es un trabajo de alumno (título + fecha y el contenido).
+ *
+ * ORTDoc.download({...}) muestra "PDF o Word" y descarga lo elegido.
+ * ORTDoc.pdf({...}) / ORTDoc.docx({...}) van directo a un formato.
+ * ORTDoc.file(n, t) descarga un archivo (.sql, .uxf, .csv, etc.).
+ * Secciones: { title, text } · { title, pre } · { title, list } · { title, table:{head,rows} } · { title, html (SVG) }
  */
 (function (global) {
   "use strict";
@@ -23,64 +27,95 @@
         s.table.rows.map(function (r) { return "<tr>" + r.map(function (c) { return "<td>" + esc(c) + "</td>"; }).join("") + "</tr>"; }).join("") +
         "</tbody></table>";
     }
-    if (s.html) out += s.html; // ya armado por la herramienta (por ejemplo un SVG)
+    if (s.html) out += s.html;
     return out + "</section>";
   }
 
+  // Estilo sobrio de documento, sin color de marca (negro sobre blanco, como un trabajo escrito).
   var CSS =
-    "@page{size:A4;margin:16mm 14mm}" +
-    "*{box-sizing:border-box}body{margin:0;font:14px/1.55 'Segoe UI',Roboto,Arial,sans-serif;color:#1b2130;background:#fff}" +
+    "@page{size:A4;margin:18mm 16mm}" +
+    "*{box-sizing:border-box}body{margin:0;font:14px/1.55 'Segoe UI',Roboto,Arial,sans-serif;color:#111;background:#fff}" +
     ".doc{max-width:820px;margin:0 auto;padding:28px 24px 40px}" +
-    "header{border-bottom:3px solid #3f51b5;padding-bottom:12px;margin-bottom:18px}" +
-    ".kicker{margin:0;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#3f51b5}" +
-    "h1{margin:4px 0 2px;font-size:26px;line-height:1.2}.sub{margin:0;color:#485064}" +
-    ".meta{margin-top:8px;font-size:12px;color:#7b8295;display:flex;gap:16px;flex-wrap:wrap}" +
-    "section{margin:0 0 20px;break-inside:avoid-page}h2{font-size:16px;margin:0 0 8px;color:#3f51b5;border-bottom:1px solid #dedad0;padding-bottom:4px}" +
+    "header{border-bottom:1.5px solid #333;padding-bottom:10px;margin-bottom:18px}" +
+    "h1{margin:0 0 2px;font-size:24px;line-height:1.2}.sub{margin:4px 0 0;color:#333}" +
+    ".meta{margin-top:6px;font-size:12px;color:#555}" +
+    "section{margin:0 0 18px;break-inside:avoid-page}h2{font-size:16px;margin:0 0 8px;border-bottom:1px solid #ccc;padding-bottom:3px}" +
     "p{margin:0 0 8px}ol{margin:0;padding-left:20px}li{margin:3px 0}" +
-    "pre{background:#f4f2ec;border:1px solid #dedad0;border-radius:8px;padding:10px 12px;font:12.5px/1.5 Consolas,'Cascadia Code',monospace;white-space:pre-wrap;word-break:break-word;margin:0}" +
-    "table{border-collapse:collapse;width:100%;font-size:12.5px}th,td{border:1px solid #cdc8bb;padding:5px 8px;text-align:left;vertical-align:top;white-space:pre-line}th{background:#eef0fb}" +
+    "pre{background:#f5f5f5;border:1px solid #ddd;border-radius:6px;padding:10px 12px;font:12.5px/1.5 Consolas,'Cascadia Code',monospace;white-space:pre-wrap;word-break:break-word;margin:0}" +
+    "table{border-collapse:collapse;width:100%;font-size:12.5px}th,td{border:1px solid #bbb;padding:5px 8px;text-align:left;vertical-align:top;white-space:pre-line}th{background:#eee}" +
     "svg{max-width:100%;height:auto}" +
-    "footer{margin-top:26px;border-top:1px solid #dedad0;padding-top:10px;font-size:11px;color:#7b8295;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}" +
-    ".bar{position:sticky;top:0;background:#3f51b5;color:#fff;padding:10px 16px;display:flex;gap:10px;align-items:center;justify-content:center;font-weight:600}" +
-    ".bar button{font:700 14px inherit;padding:8px 16px;border-radius:8px;border:2px solid #fff;background:#fff;color:#3f51b5;cursor:pointer}" +
+    ".bar{position:sticky;top:0;background:#333;color:#fff;padding:10px 16px;display:flex;gap:10px;align-items:center;justify-content:center;font-weight:600}" +
+    ".bar button{font:700 14px inherit;padding:8px 16px;border-radius:8px;border:2px solid #fff;background:#fff;color:#333;cursor:pointer}" +
     ".bar span{font-size:13px;opacity:.9}" +
     "@media print{.bar{display:none}.doc{padding:0}}";
 
   function pdf(opts) {
     var date = new Date().toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric" });
     var sheet = opts.stylesheet ? "<link rel=\"stylesheet\" href=\"" + location.origin + "/css/style.css\">" : "";
+    var meta = (opts.author ? esc(opts.author) + " · " : "") + esc(date);
     var html = "<!doctype html><html lang=\"es\" style=\"color-scheme:light\"><head><meta charset=\"utf-8\"><meta name=\"color-scheme\" content=\"light\"><title>" + esc(opts.title) + "</title>" + sheet + "<style>" + CSS + "body{padding:0!important}.nsd{min-width:0!important}</style></head><body>" +
       "<div class=\"bar\"><button onclick=\"window.print()\">Guardar como PDF / Imprimir</button><span>En la ventana de impresión elegí “Guardar como PDF”.</span></div>" +
-      "<div class=\"doc\"><header><p class=\"kicker\">" + esc(opts.tool || "ORT Info es fácil") + "</p><h1>" + esc(opts.title) + "</h1>" +
+      "<div class=\"doc\"><header><h1>" + esc(opts.title) + "</h1>" +
       (opts.subtitle ? "<p class=\"sub\">" + esc(opts.subtitle) + "</p>" : "") +
-      "<div class=\"meta\"><span>" + esc(date) + "</span>" + (opts.author ? "<span>" + esc(opts.author) + "</span>" : "") + "</div></header>" +
+      "<div class=\"meta\">" + meta + "</div></header>" +
       (opts.sections || []).filter(Boolean).map(sectionHtml).join("") +
-      "<footer><span>Hecho con ORT Info es fácil · " + esc(opts.tool || "") + "</span><span>© 2026 Theo Trosman · github.com/theotrosman</span></footer>" +
       "</div><script>setTimeout(function(){try{window.print()}catch(e){}},500)<\/script></body></html>";
     var w = window.open("", "_blank");
-    if (!w) {
-      // Si el navegador bloquea la ventana, se descarga como .html (se abre y se imprime igual)
-      file((opts.filename || opts.title || "entregable") + ".html", html, "text/html");
-      return;
-    }
+    if (!w) { file((opts.filename || opts.title || "trabajo") + ".html", html, "text/html"); return; }
     w.document.open();
     w.document.write(html);
     w.document.close();
-    if (global.ORT && global.ORT.done) global.ORT.done();
+    done();
   }
 
-  function file(name, content, mime) {
-    var safe = String(name).replace(/[\\/:*?"<>|]+/g, "").replace(/\s+/g, " ").trim() || "entregable.txt";
-    var blob = new Blob([content], { type: (mime || "text/plain") + ";charset=utf-8" });
+  function docx(opts) {
+    if (!global.ORTDocx) { pdf(opts); return; }
+    global.ORTDocx.build(opts).then(function (blob) {
+      downloadBlob(blob, (opts.filename || opts.title || "trabajo").replace(/[\\/:*?"<>|]+/g, "").trim() + ".docx");
+      done();
+    }).catch(function () {
+      if (global.AITool) global.AITool.toast("No se pudo crear el Word. Probá con PDF.");
+      else alert("No se pudo crear el Word. Probá con PDF.");
+    });
+  }
+
+  // Cartelito para elegir formato
+  function download(opts) {
+    var back = document.createElement("div");
+    back.className = "dl-modal-back";
+    back.innerHTML = '<div class="dl-modal" role="dialog" aria-label="Descargar">' +
+      '<p class="dl-title">¿Cómo lo querés descargar?</p>' +
+      '<div class="dl-btns"><button type="button" class="btn btn-primary" data-k="pdf">PDF</button>' +
+      '<button type="button" class="btn" data-k="docx">Word (.docx)</button></div>' +
+      '<button type="button" class="dl-x" aria-label="Cancelar">Cancelar</button></div>';
+    function close() { back.remove(); document.removeEventListener("keydown", onKey); }
+    function onKey(e) { if (e.key === "Escape") close(); }
+    back.addEventListener("click", function (e) { if (e.target === back) close(); });
+    back.querySelector(".dl-x").addEventListener("click", close);
+    back.querySelector('[data-k="pdf"]').addEventListener("click", function () { close(); pdf(opts); });
+    back.querySelector('[data-k="docx"]').addEventListener("click", function () { close(); docx(opts); });
+    document.addEventListener("keydown", onKey);
+    document.body.appendChild(back);
+    back.querySelector('[data-k="pdf"]').focus();
+  }
+
+  function downloadBlob(blob, name) {
     var a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = safe;
+    a.download = name;
     document.body.appendChild(a);
     a.click();
     a.remove();
     setTimeout(function () { URL.revokeObjectURL(a.href); }, 1500);
-    if (global.ORT && global.ORT.done) global.ORT.done();
   }
 
-  global.ORTDoc = { pdf: pdf, file: file, esc: esc };
+  function file(name, content, mime) {
+    var safe = String(name).replace(/[\\/:*?"<>|]+/g, "").replace(/\s+/g, " ").trim() || "archivo.txt";
+    downloadBlob(new Blob([content], { type: (mime || "text/plain") + ";charset=utf-8" }), safe);
+    done();
+  }
+
+  function done() { if (global.ORT && global.ORT.done) global.ORT.done(); }
+
+  global.ORTDoc = { download: download, pdf: pdf, docx: docx, file: file, esc: esc };
 })(window);

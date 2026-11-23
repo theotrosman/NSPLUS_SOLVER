@@ -211,11 +211,11 @@
       { title: "Interfaz en Java", pre: IFACES.base + IFACES[kind] }
     ];
   }
-  var pdfBtn = el("button", "btn btn-primary", "Descargar registro (PDF)");
+  var pdfBtn = el("button", "btn btn-primary", "Descargar registro");
   pdfBtn.type = "button";
   pdfBtn.addEventListener("click", function () {
     if (!history.length) { alert("Primero hacé alguna operación."); return; }
-    ORTDoc.pdf({ tool: "Laboratorio de TDA", title: "Seguimiento de " + (kind === "pila" ? "Pila<T>" : kind === "cola" ? "Cola<T>" : "ListaOrdenada<K,T>"), subtitle: DESC[kind], filename: "tda-" + kind, sections: pdfSections() });
+    ORTDoc.download({ tool: "Laboratorio de TDA", title: "Seguimiento de " + (kind === "pila" ? "Pila<T>" : kind === "cola" ? "Cola<T>" : "ListaOrdenada<K,T>"), subtitle: DESC[kind], filename: "tda-" + kind, sections: pdfSections() });
   });
   var bar = el("div", "result-actions");
   bar.appendChild(pdfBtn);
@@ -232,7 +232,7 @@
     var i = 0;
     (function next() {
       if (i >= items.length) {
-        ORTDoc.pdf({ tool: "Laboratorio de TDA", title: "Ejercicios de TDA", subtitle: items.length + " ejercicios con su seguimiento.", filename: "tda", sections: sections });
+        ORTDoc.download({ tool: "Laboratorio de TDA", title: "Ejercicios de TDA", subtitle: items.length + " ejercicios con su seguimiento.", filename: "tda", sections: sections });
         return;
       }
       var it = items[i++], k = it.kind === "cola" ? "cola" : it.kind === "lista" ? "lista" : "pila";

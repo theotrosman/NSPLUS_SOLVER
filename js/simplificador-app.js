@@ -208,7 +208,7 @@
   }
   $("pdf").addEventListener("click", function () {
     if (!last) return;
-    ORTDoc.pdf({ tool: "Simplificador booleano", title: "Simplificación de " + last.input, subtitle: "Álgebra de Boole paso a paso, con el nombre de cada ley.", filename: "simplificacion", sections: exerciseSections(last) });
+    ORTDoc.download({ tool: "Simplificador booleano", title: "Simplificación de " + last.input, subtitle: "Álgebra de Boole paso a paso, con el nombre de cada ley.", filename: "simplificacion", sections: exerciseSections(last) });
   });
   window.ORTConsigna = window.ORTConsigna || {};
   window.ORTConsigna.onItem = function (it) { input.value = String(it.expr).replace(/'/g, "’"); onInput(); run(); };
@@ -218,7 +218,7 @@
       try { sections = sections.concat(exerciseSections(BoolEngine.simplify(it.expr), it.label)); }
       catch (e) { sections.push({ title: it.label, text: "No se pudo leer la expresión \"" + it.expr + "\": " + e.message }); }
     });
-    ORTDoc.pdf({ tool: "Simplificador booleano", title: "Ejercicios de simplificación", subtitle: items.length + " ejercicios resueltos paso a paso.", filename: "simplificaciones", sections: sections });
+    ORTDoc.download({ tool: "Simplificador booleano", title: "Ejercicios de simplificación", subtitle: items.length + " ejercicios resueltos paso a paso.", filename: "simplificaciones", sections: sections });
   };
 
   $("form").addEventListener("submit", function (e) { e.preventDefault(); run(); });

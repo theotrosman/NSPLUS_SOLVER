@@ -194,9 +194,9 @@
       rows: LAYERS.map(function (l) { return [l.n, l.name, l.tcp, l.what, l.pdu, l.protocols.join(" · "), l.devices.join(" · ")]; }) } },
       { title: "Encapsulamiento", list: ["Aplicación: los datos del programa.", "Transporte: + encabezado TCP/UDP con puertos → segmento.", "Red: + encabezado IP con direcciones IP → paquete.", "Enlace: + direcciones MAC y control de errores (FCS) → trama.", "Física: se transmite como bits."] }];
   }
-  var pdfBtn = el("button", "btn btn-primary", "Descargar hoja de estudio (PDF)");
+  var pdfBtn = el("button", "btn btn-primary", "Descargar hoja de estudio");
   pdfBtn.type = "button";
-  pdfBtn.addEventListener("click", function () { ORTDoc.pdf({ tool: "Modelo OSI y TCP/IP", title: "Modelo OSI y TCP/IP", subtitle: "Hoja de estudio: capas, PDU, protocolos y dispositivos.", filename: "osi-tcp-ip", sections: studySheet() }); });
+  pdfBtn.addEventListener("click", function () { ORTDoc.download({ tool: "Modelo OSI y TCP/IP", title: "Modelo OSI y TCP/IP", subtitle: "Hoja de estudio: capas, PDU, protocolos y dispositivos.", filename: "osi-tcp-ip", sections: studySheet() }); });
   var actions = el("div", "result-actions");
   actions.appendChild(pdfBtn);
   document.querySelector("main .card:not(.consigna-card)") && document.querySelector("main section.card").appendChild(actions);
@@ -215,7 +215,7 @@
     var b = el("button", "btn btn-primary cc-all", "Descargar las respuestas (PDF)");
     b.type = "button";
     b.addEventListener("click", function () {
-      ORTDoc.pdf({ tool: "Modelo OSI y TCP/IP", title: "Respuestas: redes, OSI y TCP/IP", filename: "respuestas-osi",
+      ORTDoc.download({ tool: "Modelo OSI y TCP/IP", title: "Respuestas: redes, OSI y TCP/IP", filename: "respuestas-osi",
         sections: items.map(function (it) { return { title: it.label + ": " + (it.question || ""), text: (it.answer || "") + (it.explanation ? "\n\n" + it.explanation : "") }; }).concat(studySheet()) });
     });
     box.appendChild(b);

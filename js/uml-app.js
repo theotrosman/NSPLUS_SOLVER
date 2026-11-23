@@ -316,7 +316,7 @@
 
   /* --- Entregable en PDF --- */
   (function () {
-    var b = el("button", "btn btn-sm", "Descargar entregable (PDF)");
+    var b = el("button", "btn btn-sm", "Descargar entregable");
     b.type = "button";
     $("download-png").after(b);
     b.addEventListener("click", function () {
@@ -327,7 +327,7 @@
       });
       var sel = document.querySelector('input[name="code-lang"]:checked');
       var files = window.UMLCode ? UMLCode.generate(u, sel ? sel.value : "java") : [];
-      ORTDoc.pdf({
+      ORTDoc.download({
         tool: "UML Solver", title: u.name, subtitle: "Diagrama de clases UML.", filename: fileName(u.name),
         sections: [
           current.consigna ? { title: "Consigna", pre: current.consigna.slice(0, 5000) } : null,
