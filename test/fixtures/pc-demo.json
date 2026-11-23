@@ -1,0 +1,46 @@
+{
+  "client": "Mariana",
+  "summary": "Modo demo. Su hijo juega shooters online y la computadora actual no le da los FPS que necesita. Quiere entender las diferencias y comprar algo que le dure.",
+  "needs": ["Jugar Valorant, CS2 y Fortnite fluido", "Discord y videos abiertos a la vez", "Poder sumar un segundo monitor", "Que dure varios años"],
+  "options": [
+    { "name": "Opción 1 · Económica", "level": "Gama de entrada", "goal": "Juegos competitivos a más de 144 FPS en calidad media.",
+      "components": [
+        { "part": "Procesador", "choice": "AMD Ryzen 5 5600", "why": "6 núcleos: alcanza para jugar y tener Discord abierto." },
+        { "part": "Motherboard", "choice": "B550 (socket AM4)", "why": "Compatible con el procesador y con lugar para mejorar después." },
+        { "part": "Memoria RAM", "choice": "16 GB DDR4 3200 MHz (2×8)", "why": "Lo justo para jugar y tener otras cosas abiertas." },
+        { "part": "Placa de video", "choice": "NVIDIA RTX 3050 8 GB", "why": "Mueve estos juegos con buenos FPS." },
+        { "part": "Almacenamiento", "choice": "SSD NVMe 500 GB", "why": "Prende y carga los juegos rápido." },
+        { "part": "Fuente", "choice": "550 W 80 Plus Bronze", "why": "Energía estable con margen." },
+        { "part": "Gabinete", "choice": "Gabinete ATX con 2 coolers", "why": "Buena ventilación." },
+        { "part": "Refrigeración", "choice": "Cooler que viene con el procesador", "why": "Suficiente para este procesador." }
+      ],
+      "pros": ["La más barata", "Cumple con los juegos que nombra"], "cons": ["Poco margen para juegos más pesados"] },
+    { "name": "Opción 2 · Intermedia", "level": "Gama media", "goal": "Muchos FPS y dos monitores sin problemas.",
+      "components": [
+        { "part": "Procesador", "choice": "AMD Ryzen 5 7600", "why": "Más rápido y en una plataforma nueva (AM5)." },
+        { "part": "Motherboard", "choice": "B650 (socket AM5)", "why": "Admite procesadores futuros." },
+        { "part": "Memoria RAM", "choice": "32 GB DDR5 6000 MHz (2×16)", "why": "Sobra para jugar con todo abierto." },
+        { "part": "Placa de video", "choice": "NVIDIA RTX 4060 8 GB", "why": "Juegos competitivos a muy alta tasa de FPS." },
+        { "part": "Almacenamiento", "choice": "SSD NVMe 1 TB", "why": "Lugar para varios juegos." },
+        { "part": "Fuente", "choice": "650 W 80 Plus Bronze", "why": "Margen para mejorar la placa de video." },
+        { "part": "Gabinete", "choice": "Gabinete ATX con buen flujo de aire", "why": "Mantiene todo fresco." },
+        { "part": "Refrigeración", "choice": "Cooler de torre", "why": "Más silencioso y fresco." }
+      ],
+      "pros": ["Muy buen equilibrio precio/rendimiento", "Fácil de mejorar"], "cons": ["Cuesta bastante más que la 1"] },
+    { "name": "Opción 3 · Potente", "level": "Gama alta", "goal": "Todo al máximo y para muchos años.",
+      "components": [
+        { "part": "Procesador", "choice": "AMD Ryzen 7 7800X3D", "why": "De los mejores para juegos." },
+        { "part": "Motherboard", "choice": "B650 de gama alta (AM5)", "why": "Mejor alimentación para el procesador." },
+        { "part": "Memoria RAM", "choice": "32 GB DDR5 6000 MHz", "why": "Rápida y de sobra." },
+        { "part": "Placa de video", "choice": "NVIDIA RTX 4070 Super 12 GB", "why": "Juegos actuales al máximo." },
+        { "part": "Almacenamiento", "choice": "SSD NVMe 2 TB", "why": "Espacio para todo." },
+        { "part": "Fuente", "choice": "750 W 80 Plus Gold", "why": "Más eficiente y con margen." },
+        { "part": "Gabinete", "choice": "Gabinete ATX premium", "why": "Mejor ventilación y orden de cables." },
+        { "part": "Refrigeración", "choice": "Refrigeración líquida 240 mm", "why": "Temperaturas bajas jugando horas." }
+      ],
+      "pros": ["Dura muchísimos años"], "cons": ["Más de lo que necesita para estos juegos"] }
+  ],
+  "comparison": "La opción 1 alcanza para los juegos que nombra. La 2 da más FPS, más memoria para tener todo abierto y deja mejorar la compu más adelante. La 3 es la más potente, pero para estos juegos es más de lo necesario.",
+  "recommendation": "La opción 2: cumple holgada con lo que pide, permite el segundo monitor y la plataforma AM5 deja cambiar piezas en el futuro.",
+  "glossary": [ { "term": "FPS", "meaning": "Imágenes por segundo: más FPS, el juego se ve más fluido." }, { "term": "SSD", "meaning": "Disco rápido sin partes que se mueven." }, { "term": "RAM", "meaning": "Memoria donde están los programas abiertos." } ]
+}

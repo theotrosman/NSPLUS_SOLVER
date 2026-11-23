@@ -1,0 +1,132 @@
+<!doctype html>
+<!--
+  ORT Info es fácil · Simplificador booleano
+  © 2026 Theo Trosman. Todos los derechos reservados.
+  https://github.com/theotrosman
+-->
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Simplificador booleano paso a paso · ORT Info es fácil · por Theo Trosman</title>
+  <meta name="description" content="Simplificá expresiones de álgebra de Boole paso a paso, con el nombre de cada ley, tabla de verdad y mapa de Karnaugh. Creado por Theo Trosman.">
+  <meta name="author" content="Theo Trosman">
+  <meta name="copyright" content="© 2026 Theo Trosman. Todos los derechos reservados.">
+  <link rel="author" href="https://github.com/theotrosman">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231d2433'/%3E%3Cpath d='M6 9h20M6 9l10 9 10-9M16 18v6M6 24h20' stroke='%23f2efe8' stroke-width='2' fill='none'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <nav class="crumbs" aria-label="Ubicación">
+        <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span class="brand-name">ORT Info es fácil</span></a>
+        <span class="crumb-sep" aria-hidden="true">/</span>
+        <span class="crumb-current">Simplificador</span>
+      </nav>
+      <a class="byline" href="https://github.com/theotrosman" target="_blank" rel="noopener"><span>por <strong>Theo Trosman</strong></span></a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hall-hero tool-hero">
+      <h1>Simplificador booleano, paso a paso.</h1>
+      <p>Escribí la expresión y te la simplifica con el nombre de cada ley en cada renglón, como en la guía de SSI: <em>De Morgan) …</em>, <em>Absorción) …</em>, hasta <strong>Fs</strong>. Sin IA: todo se calcula y se verifica con la tabla de verdad.</p>
+    </section>
+
+    <form id="form" class="card" autocomplete="off">
+      <div class="step-title"><span class="step-num">1</span> Escribí la expresión</div>
+      <div class="expr-box">
+        <input id="expr" class="expr-input" type="text" spellcheck="false" autocapitalize="characters"
+          placeholder="Ej: [ (B+CA)’ + C ]’ + D’ + C" aria-describedby="expr-help">
+        <div class="keypad" aria-label="Teclado">
+          <button type="button" data-k="A">A</button><button type="button" data-k="B">B</button>
+          <button type="button" data-k="C">C</button><button type="button" data-k="D">D</button>
+          <button type="button" data-k="’" class="kp-accent" title="Negado (también sirve la tecla ')">’</button>
+          <button type="button" data-k=" + ">+</button>
+          <button type="button" data-k="(">(</button><button type="button" data-k=")">)</button>
+          <button type="button" data-k="[ ">[</button><button type="button" data-k=" ]">]</button>
+          <button type="button" data-k="{ ">{</button><button type="button" data-k=" }">}</button>
+          <button type="button" data-k="⌫" class="kp-muted" title="Borrar">⌫</button>
+        </div>
+      </div>
+      <p id="expr-help" class="muted">Producto: letras juntas (AB). Suma: +. Negado: ’ o la tecla ' después (A’ o (AB)’). Podés usar ( ), [ ] y { }.</p>
+      <p id="preview" class="expr-preview" hidden></p>
+
+      <details class="guide-ex">
+        <summary>Probar con los ejercicios de la guía</summary>
+        <div id="examples" class="ex-grid"></div>
+      </details>
+
+      <button id="submit" class="btn btn-primary btn-big" type="submit"><span class="btn-label">Simplificar</span><kbd class="kbd">↵</kbd></button>
+      <p id="form-error" class="form-error" hidden></p>
+    </form>
+
+    <section id="result" class="card result-card" hidden aria-live="polite">
+      <div class="result-top">
+        <div>
+          <p class="result-kicker">Listo</p>
+          <h2 class="result-name">Fs = <span id="fs"></span></h2>
+          <p id="badge" class="muted"></p>
+        </div>
+        <button id="copy" class="btn btn-primary btn-download" type="button">Copiar los pasos</button>
+      </div>
+
+      <div class="tabs" role="tablist">
+        <button class="tab is-active" role="tab" data-tab="steps" aria-selected="true">Pasos</button>
+        <button class="tab" role="tab" data-tab="table" aria-selected="false">Tabla de verdad</button>
+        <button class="tab" role="tab" data-tab="kmap" aria-selected="false">Mapa de Karnaugh</button>
+        <button class="tab" role="tab" data-tab="laws" aria-selected="false">Leyes</button>
+      </div>
+
+      <div class="tab-panel" data-panel="steps">
+        <ol id="steps" class="law-steps"></ol>
+        <p id="minimal-note" class="explanation" hidden></p>
+      </div>
+      <div class="tab-panel" data-panel="table" hidden><div id="table" class="table-wrap"></div></div>
+      <div class="tab-panel" data-panel="kmap" hidden><div id="kmap"></div></div>
+      <div class="tab-panel" data-panel="laws" hidden>
+        <div class="laws">
+          <div><strong>Involución</strong><span>(A’)’ = A</span></div>
+          <div><strong>Complementación</strong><span>A·A’ = 0 · A + A’ = 1</span></div>
+          <div><strong>Identidad</strong><span>A·1 = A · A·0 = 0 · A + 0 = A · A + 1 = 1</span></div>
+          <div><strong>Idempotencia</strong><span>A·A = A · A + A = A</span></div>
+          <div><strong>Conmutativa</strong><span>AB = BA · A + B = B + A</span></div>
+          <div><strong>Asociativa</strong><span>(AB)C = A(BC)</span></div>
+          <div><strong>Distributiva</strong><span>A(B + C) = AB + AC</span></div>
+          <div><strong>Factor común</strong><span>AB + AC = A(B + C)</span></div>
+          <div><strong>Absorción</strong><span>A + AB = A · A + A’B = A + B · A(A + B) = A</span></div>
+          <div><strong>De Morgan</strong><span>(AB)’ = A’ + B’ · (A + B)’ = A’B’</span></div>
+          <div><strong>Consenso</strong><span>AB + A’C + BC = AB + A’C</span></div>
+        </div>
+      </div>
+    </section>
+
+    <p class="credit-inline"><a href="/">← Volver a todas las herramientas</a><br>El simplificador fue creado por <a href="https://github.com/theotrosman" target="_blank" rel="noopener">Theo Trosman</a>. © 2026 Theo Trosman. Todos los derechos reservados.</p>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <div class="indigo-bar" role="contentinfo" aria-label="Créditos">
+    <a class="ib-left" href="https://github.com/theotrosman" target="_blank" rel="noopener">Theo Trosman</a>
+    <span class="ib-motto">Para toda la Comunidad de ORT<sup>*</sup></span>
+    <a class="ib-right" href="https://github.com/theotrosman/NSPLUS_SOLVER" target="_blank" rel="noopener">© 2026 Theo Trosman</a>
+  </div>
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <div>
+        <p class="footer-brand">ORT Info es fácil · Simplificador</p>
+        <p>© <span id="year">2026</span> Theo Trosman. Todos los derechos reservados.</p>
+        <p>Diseñado y desarrollado por <a href="https://github.com/theotrosman" target="_blank" rel="noopener">Theo Trosman</a> · <a href="https://github.com/theotrosman/NSPLUS_SOLVER" target="_blank" rel="noopener">Código en GitHub</a></p>
+      </div>
+      <p class="disclaimer"><strong>*</strong> Sí, se parece muchísimo a NS Plus. Es a propósito. Sitio independiente y no oficial, hecho por un alumno. No está afiliado a ORT Argentina.</p>
+    </div>
+  </footer>
+
+  <script src="js/bool-engine.js"></script>
+  <script src="js/simplificador-app.js"></script>
+</body>
+</html>

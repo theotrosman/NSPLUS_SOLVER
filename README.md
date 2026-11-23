@@ -8,6 +8,9 @@ Página con herramientas simples para la materia de Informática. La página pri
 | --- | --- | --- |
 | NS Solver | `/ns-solver` | `ns-solver.html` |
 | UML Solver | `/uml-solver` | `uml-solver.html` |
+| Simplificador booleano | `/simplificador` | `simplificador.html` |
+| Cambio de base | `/cambio-de-base` | `cambio-de-base.html` |
+| Armador de PC | `/armador-pc` | `armador-pc.html` |
 
 Para sumar una herramienta nueva: crear su `.html` en la raíz y agregar su tarjeta en `index.html`.
 
@@ -69,6 +72,9 @@ npm test
 | `uml-solver.html`, `js/uml-app.js` | Página de UML Solver |
 | `js/uml-layout.js` | Ubica las clases, traza las flechas y arma el `.uxf` y la vista previa |
 | `api/uml.js`, `api/_uml-prompt.js`, `api/_uml-normalize.js` | API, instrucciones y validación del UML |
+| `simplificador.html`, `js/bool-engine.js`, `js/simplificador-app.js` | Simplificador booleano (motor de leyes, tabla de verdad, Karnaugh) |
+| `cambio-de-base.html`, `js/base-engine.js`, `js/base-app.js` | Cambio de base y operaciones binarias |
+| `armador-pc.html`, `js/pc-app.js`, `api/pc.js` | Armador de PC |
 
 ## UML Solver
 
@@ -79,6 +85,22 @@ De consigna a diagrama de clases UML listo para [UMLetino](https://www.umletino.
 - **5to año (Java)**: además herencia, clases abstractas, interfaces, enumerados, agregación (rombo blanco) y composición (rombo negro).
 - Ubica las clases solo (quien "tiene" arriba, padres arriba de las hijas) y traza las flechas en ángulo recto con las puntas sobre el borde, así UMLetino las deja pegadas a las clases.
 - Vista previa en la página, descarga en PNG y un detalle de clases y relaciones explicado.
+## Simplificador booleano
+
+Simplifica expresiones de álgebra de Boole **paso a paso, sin IA**, con el formato de la guía "Ejercicios de Simplificación" de SSI: una ley por renglón (`De Morgan) …`, `Absorción) …`) y al final `Fs = …`.
+
+- Leyes: Involución, Complementación, Identidad, Idempotencia, Conmutativa, Absorción, De Morgan, Factor común, Distributiva y Consenso.
+- Probado con los 20 ejercicios de la guía: llega al mismo resultado y con la misma cantidad de letras (`npm test`).
+- Verifica cada resultado con la tabla de verdad, muestra el mapa de Karnaugh (2 a 4 variables) y avisa si existe una forma todavía más corta.
+- Se escribe con letras, `+`, `’` (o la tecla `'`), y `( ) [ ] { }`.
+
+## Cambio de base
+
+Pasa entre binario, octal, decimal, hexadecimal y cualquier base de 2 a 36, con los pasos: polinomio, divisiones sucesivas, multiplicaciones sucesivas (parte con coma) y agrupación de bits. También suma, resta y multiplicación en binario con acarreos, y complemento a 1 y a 2. Sin IA.
+
+## Armador de PC
+
+Para el TP de Componentes: pegás la situación del cliente y la IA propone configuraciones (económica, intermedia y potente) con procesador, motherboard, RAM, placa de video, almacenamiento, fuente, gabinete y refrigeración compatibles, explicando cada elección, qué cambia entre opciones, una recomendación y un glosario.
 ## Aviso
 
 Herramienta independiente y no oficial. No está afiliada a ORT ni a NS Plus; NS Plus es obra de sus autores, los profesores C. Daniel Vázquez y Carlos E. Cimino. La IA puede equivocarse: revisá siempre el diagrama con una prueba de escritorio.

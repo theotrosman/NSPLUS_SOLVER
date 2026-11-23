@@ -8,7 +8,7 @@
   "type": "module",
   "scripts": {
     "dev": "node dev-server.js",
-    "test": "node test/normalize.test.js && node test/uml.test.js"
+    "test": "node test/normalize.test.js && node test/uml.test.js && node test/bool.test.js && node test/base.test.js"
   },
   "engines": {
     "node": ">=18"

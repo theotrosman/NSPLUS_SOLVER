@@ -6,6 +6,9 @@
     },
     "api/uml.js": {
       "maxDuration": 120
+    },
+    "api/pc.js": {
+      "maxDuration": 120
     }
   },
   "headers": [

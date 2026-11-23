@@ -1,0 +1,123 @@
+<!doctype html>
+<!--
+  ORT Info es fácil · Armador de PC
+  © 2026 Theo Trosman. Todos los derechos reservados.
+  https://github.com/theotrosman
+-->
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Armador de PC para las Situaciones · ORT Info es fácil · por Theo Trosman</title>
+  <meta name="description" content="Pegá la situación del cliente y obtené configuraciones de PC explicadas pieza por pieza, para el TP de Componentes. Creado por Theo Trosman.">
+  <meta name="author" content="Theo Trosman">
+  <meta name="copyright" content="© 2026 Theo Trosman. Todos los derechos reservados.">
+  <link rel="author" href="https://github.com/theotrosman">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231d2433'/%3E%3Cpath d='M6 9h20M6 9l10 9 10-9M16 18v6M6 24h20' stroke='%23f2efe8' stroke-width='2' fill='none'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <nav class="crumbs" aria-label="Ubicación">
+        <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span class="brand-name">ORT Info es fácil</span></a>
+        <span class="crumb-sep" aria-hidden="true">/</span>
+        <span class="crumb-current">Armador de PC</span>
+      </nav>
+      <a class="byline" href="https://github.com/theotrosman" target="_blank" rel="noopener"><span>por <strong>Theo Trosman</strong></span></a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hall-hero tool-hero">
+      <h1>Armador de PC para las Situaciones.</h1>
+      <p>Pegá lo que cuenta el cliente y te propone configuraciones distintas, pieza por pieza, explicando por qué cada una y qué cambia entre las opciones. Ideal para el TP de Componentes.</p>
+    </section>
+
+    <form id="form" class="card" autocomplete="off">
+      <div class="step-title"><span class="step-num">1</span> Pegá la situación del cliente</div>
+      <div id="dropzone" class="composer">
+        <textarea id="consigna" rows="8" maxlength="20000" placeholder="Ej: “Mi hijo juega Fortnite y Valorant y se queja de que la compu anda a pocos FPS. Quiero algo que le dure…”"></textarea>
+        <div class="composer-bar">
+          <label class="btn btn-soft btn-sm">
+            Subir PDF
+            <input id="file" type="file" accept="application/pdf,.pdf,text/plain,.txt" hidden>
+          </label>
+          <span class="counter"><span id="count">0</span> / 20.000</span>
+        </div>
+      </div>
+      <p id="file-status" class="file-status" hidden></p>
+      <div class="examples">
+        <span class="muted">Probá con:</span>
+        <div id="examples" class="examples-list"></div>
+      </div>
+      <button id="submit" class="btn btn-primary btn-big" type="submit"><span class="btn-label">Armar las opciones</span></button>
+      <p id="form-error" class="form-error" hidden></p>
+    </form>
+
+    <section id="state-loading" class="card state-loading" hidden aria-live="polite">
+      <div class="loading-head">
+        <div class="spinner" aria-hidden="true"></div>
+        <div><p class="loading-text">Pensando las configuraciones…</p><p class="muted">Puede tardar hasta un minuto.</p></div>
+      </div>
+    </section>
+
+    <section id="state-error" class="card state state-error" hidden aria-live="polite">
+      <div class="error-icon" aria-hidden="true">!</div>
+      <p class="error-title">Uy, no salió</p>
+      <p id="error-text"></p>
+      <button id="retry" class="btn btn-primary" type="button">Probar de nuevo</button>
+    </section>
+
+    <section id="state-result" class="card result-card" hidden aria-live="polite">
+      <div class="result-top">
+        <div>
+          <p class="result-kicker">Listo</p>
+          <h2 id="client" class="result-name"></h2>
+          <p id="summary" class="muted"></p>
+        </div>
+        <button id="copy" class="btn btn-primary btn-download" type="button">Copiar todo para el TP</button>
+      </div>
+      <ul id="needs" class="need-chips"></ul>
+      <div id="options" class="pc-options"></div>
+      <div class="explanation"><p class="explanation-title">¿Qué cambia entre las opciones?</p><p id="comparison"></p></div>
+      <div class="explanation"><p class="explanation-title">Recomendación</p><p id="recommendation"></p></div>
+      <details class="uml-detail" id="glossary-box">
+        <summary>Glosario: palabras técnicas explicadas</summary>
+        <dl id="glossary" class="glossary"></dl>
+      </details>
+      <p class="warning">Los modelos son orientativos: chequeá precios, stock y que sigan a la venta antes de entregarlo.</p>
+      <div class="result-actions">
+        <button id="regenerate" class="btn" type="button">Hacelo de nuevo</button>
+        <button id="new" class="btn btn-ghost" type="button">Otra situación</button>
+      </div>
+    </section>
+
+    <p class="credit-inline"><a href="/">← Volver a todas las herramientas</a><br>El Armador de PC fue creado por <a href="https://github.com/theotrosman" target="_blank" rel="noopener">Theo Trosman</a>. © 2026 Theo Trosman. Todos los derechos reservados.</p>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <div class="indigo-bar" role="contentinfo" aria-label="Créditos">
+    <a class="ib-left" href="https://github.com/theotrosman" target="_blank" rel="noopener">Theo Trosman</a>
+    <span class="ib-motto">Para toda la Comunidad de ORT<sup>*</sup></span>
+    <a class="ib-right" href="https://github.com/theotrosman/NSPLUS_SOLVER" target="_blank" rel="noopener">© 2026 Theo Trosman</a>
+  </div>
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <div>
+        <p class="footer-brand">ORT Info es fácil · Armador de PC</p>
+        <p>© <span id="year">2026</span> Theo Trosman. Todos los derechos reservados.</p>
+        <p>Diseñado y desarrollado por <a href="https://github.com/theotrosman" target="_blank" rel="noopener">Theo Trosman</a> · <a href="https://github.com/theotrosman/NSPLUS_SOLVER" target="_blank" rel="noopener">Código en GitHub</a></p>
+      </div>
+      <p class="disclaimer"><strong>*</strong> Sí, se parece muchísimo a NS Plus. Es a propósito. Sitio independiente y no oficial, hecho por un alumno. No está afiliado a ORT Argentina.</p>
+    </div>
+  </footer>
+
+  <script src="js/pdf-text.js"></script>
+  <script src="js/pc-app.js"></script>
+</body>
+</html>
